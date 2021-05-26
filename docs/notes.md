@@ -98,6 +98,17 @@ KF::update(const std::vector<T>& y)
 
 `KF::init()`
 
+#### Todo
+
+- [ ] Add tests.  
+- [x] Write tracking matrix base class.  
+- [x] Write state transition matrix (F) class.  
+- [ ] Write measurement model matrix (H) class.  
+- [ ] Write process noise covariance matrix (Q) class.  
+- [ ] Write control input matrix (C) class.  
+- [ ] Write measurement (z) class.  
+- [ ] Write state error covariance (P) class.  
+- [ ] Write KF class.  
 
 <!-- ### Policy classes
 
@@ -108,6 +119,10 @@ KF::update(const std::vector<T>& y)
 `MotionModelPolicy` may have type
 `<1|2|3>DConstant<Velocity|Acceleration>Motion`
 or `CustomMotion`. -->
+
+
+---
+
 
 ## Tracking filter base class
 
