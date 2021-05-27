@@ -55,8 +55,8 @@ matrix.
 
 #### Protected
 
-* `M_`. Number of elements of the measurement vector. Positive nonzero integer.
-* `N_`. Length of the state vector. Positive nonzero integer.
+* `M_`. Number of elements of the state vector. Positive nonzero integer.
+* `N_`. Length of the measurement vector. Positive nonzero integer.
 * `C_`. Number of control inputs. An integer >= 0. If a control model is not provided,
 `C_` equals 0.
 * `state_covariance` P_k. A positive scalar or a M-by-M matrix. Positive-definite.
