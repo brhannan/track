@@ -21,11 +21,11 @@
 //      // elements.
 //          std::vector<double> v {1, 2, 3, 4};
 //          // Reshape v into a 2-by-2 matrix. v is wrapped row-wise.
-//          MeasurementMatrix<double> stm(v,2,2);
+//          MeasurementMatrix<double> H(v,2,2);
 //
 //      // Example 2: Initialize with a ublas::matrix.
 //          boost::numeric::ublas::matrix<double> m(3,4);
-//          MeasurementMatrix<double> stm(m);
+//          MeasurementMatrix<double> H(m);
 template <class T>
 class MeasurementMatrix : public TrackingMatrix<T>
 {
@@ -59,7 +59,7 @@ void MeasurementMatrix<T>::validate_dimensions(int num_elems, int num_rows,
     }
 }
 
-// Constructs STM from vector.
+// Constructs from vector and matrix dimensions.
 template <class T>
 MeasurementMatrix<T>::MeasurementMatrix(std::vector<T>& v, int num_rows,
     int num_cols)
@@ -70,7 +70,7 @@ MeasurementMatrix<T>::MeasurementMatrix(std::vector<T>& v, int num_rows,
     this->data = m;
 }
 
-// Constructs STM from matrix.
+// Constructs from matrix.
 template <class T>
 MeasurementMatrix<T>::MeasurementMatrix(boost::numeric::ublas::matrix<T> m)
 {

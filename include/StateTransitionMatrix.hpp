@@ -64,7 +64,7 @@ void StateTransitionMatrix<T>::validate_dimensions(int num_elems, int num_rows,
     }
 }
 
-// Constructs STM from vector.
+// Constructs from vector and matrix dimensions.
 template <class T>
 StateTransitionMatrix<T>::StateTransitionMatrix(std::vector<T>& v, int num_rows,
     int num_cols)
@@ -75,7 +75,7 @@ StateTransitionMatrix<T>::StateTransitionMatrix(std::vector<T>& v, int num_rows,
     this->data = m;
 }
 
-// Constructs STM from matrix.
+// Constructs from matrix.
 template <class T>
 StateTransitionMatrix<T>::StateTransitionMatrix(boost::numeric::ublas::matrix<T> m)
 {

@@ -105,7 +105,7 @@ KF::update(const std::vector<T>& y)
 - [ ] Add tests.  
 - [x] Write tracking matrix base class.  
 - [x] Write state transition matrix (F) class.  
-- [ ] Write measurement model matrix (H) class.  
+- [x] Write measurement model matrix (H) class.  
 - [ ] Write process noise covariance matrix (Q) class.  
 - [ ] Write control input matrix (C) class.  
 - [ ] Write measurement (z) class.  
