@@ -3,13 +3,15 @@ Planning notes for tracking filter project **track**.
 
 ## Overview
 
-### Goal
+### Goals
 
 Create a library of tracking and state estimation filters.
 
-### Strategy
+Near term goal: write Kalman, Extended Kalman , JPDA filters.  
+Stretch goals: Python interoperability, sensor models, particle filter,
+cool examples.
 
-Each filter is a class.
+### Strategy
 
 Each state estimation filter has a number of matrices (state transition matrix,
 measurement matrix, etc.).

@@ -6,13 +6,14 @@
 #include <vector>
 #include <stdexcept>
 #include "TrackingMatrix.hpp"
+#include "matrix_utils.hpp"
 
 // Provides a state transition matrix.
 // Matrix elements may be provided as a std::vector or a
 // boost::numeric::ublas::matrix.
 //
-// The state transition matrix is a real-valued N-by-M matrix where N is the
-// number of elements of the measurement vector and M is the number of states.
+// The state transition matrix is a real-valued M-by-M matrix where
+// M is the number of states.
 //
 // Examples:
 //
@@ -23,7 +24,7 @@
 //          StateTransitionMatrix<double> stm(v,2,2);
 //
 //      // Example 2: Initialize with a ublas::matrix.
-//          boost::numeric::ublas::matrix<double> m(3,4);
+//          boost::numeric::ublas::matrix<double> m(4,4);
 //          StateTransitionMatrix<double> stm(m);
 template <class T>
 class StateTransitionMatrix : public TrackingMatrix<T>
@@ -34,21 +35,6 @@ public:
     StateTransitionMatrix(boost::numeric::ublas::matrix<T> m);
     StateTransitionMatrix();
 };
-
-// Returns a m-by-n matrix containing the data specified by vector v. v contains
-// the row-unwrapped elements of the matrix.
-template <class T, typename F = boost::numeric::ublas::row_major>
-boost::numeric::ublas::matrix<T,F> create_matrix_from_vector(const std::vector<T>& v,
-    std::size_t m, std::size_t n)
-{
-    if (m*n != v.size())
-    {
-        throw std::invalid_argument("Invalid matrix dimensions.");
-    }
-    boost::numeric::ublas::unbounded_array<T> elems(m*n);
-    std::copy(v.begin(), v.end(), elems.begin());
-    return boost::numeric::ublas::matrix<T>(m, n, elems);
-}
 
 template <class T>
 void StateTransitionMatrix<T>::validate_dimensions(int num_elems, int num_rows,
@@ -65,6 +51,16 @@ void StateTransitionMatrix<T>::validate_dimensions(int num_elems, int num_rows,
     if (num_cols <= 0)
     {
         throw std::invalid_argument("Number of columns must be > 0.");
+    }
+    if (num_rows != num_cols)
+    {
+        throw std::invalid_argument("State transition matrix must be a square \
+            matrix.");
+    }
+    if (num_elems != num_rows*num_cols)
+    {
+        throw std::invalid_argument("Number of matrix elements must equal \
+        num_rows * num_cols.");
     }
 }
 
