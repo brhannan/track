@@ -11,13 +11,6 @@ Near term goal: write Kalman, Extended Kalman , JPDA filters.
 Stretch goals: Python interoperability, sensor models, particle filter,
 cool examples.
 
-### Strategy
-
-Each state estimation filter has a number of matrices (state transition matrix,
-measurement matrix, etc.).
-Each matrix inherits from `TrackingMatrix`. Rationale: allows type/dimensions
-checking and default-value initialization.
-
 ### Filters
 
 The following filters will be implemented in the near term.  
@@ -102,15 +95,13 @@ KF::update(const std::vector<T>& y)
 
 #### Todo
 
-- [ ] Add tests.  
-- [x] Write tracking matrix base class.  
-- [x] Write state transition matrix (F) class.  
-- [x] Write measurement model matrix (H) class.  
-- [ ] Write process noise covariance matrix (Q) class.  
-- [ ] Write control input matrix (C) class.  
-- [ ] Write measurement (z) class.  
-- [ ] Write state error covariance (P) class.  
+- [x] Add tests.  
+- [x] Write track::Matrix class.    
 - [ ] Write KF class.  
+    - [x] Add `init()`.  
+    - [ ] Add `predict()`.  
+    - [ ] Add `update()`.  
+- [ ] Write EKF class.
 
 <!-- ### Policy classes
 

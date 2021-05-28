@@ -4,8 +4,7 @@
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/storage.hpp>
 #include <stdexcept>
-
-#include <iostream> // for debug
+#include <Matrix.hpp>
 
 namespace track
 {
@@ -42,7 +41,8 @@ private:
     int get_num_measurements();
     int get_num_controls();
     bool is_mat_empty(track::Matrix<T>& mat);
-    void initialize_using_identity_matrix(track::Matrix<T>& mat, int L, T v = 1);
+    void initialize_from_identity_matrix(track::Matrix<T>& mat, int L, T v = 1);
+    void initialize_column_vector(track::Matrix<T>& vec, int L, T v = 0);
 };
 
 template <class T>
@@ -93,14 +93,30 @@ bool KalmanFilter<T>::is_mat_empty(track::Matrix<T>& mat)
     return (mat.data.size1()==0) && (mat.data.size2()==0);
 }
 
-// Initialize a matrix by scaling an identity matrix of dimension L. The
+// Initialize a square matrix by scaling an identity matrix of dimension L. The
 // matrix is scaled by scalar v. The result is returned to mat.
 template <class T>
-void KalmanFilter<T>::initialize_using_identity_matrix(track::Matrix<T>& mat,
+void KalmanFilter<T>::initialize_from_identity_matrix(track::Matrix<T>& mat,
     int L, T v)
 {
     boost::numeric::ublas::identity_matrix<T> ident(L);
     mat.data = v * ident;
+}
+
+// Initialize a column vector by scaling a vector of dimension L. All values
+// are set to value v (default 0).
+template <class T>
+void KalmanFilter<T>::initialize_column_vector(track::Matrix<T>& vec, int L, T v)
+{
+    boost::numeric::ublas::matrix<T> m(L,1);
+    for (auto i=0; i<m.size1(); i++)
+    {
+        for (auto j=0; j<m.size2(); j++)
+        {
+            m(i,j) = v;
+        }
+    }
+    vec.data = m;
 }
 
 
@@ -112,20 +128,36 @@ void KalmanFilter<T>::init()
     N_ = get_num_measurements();
     C_ = get_num_controls();
 
-    // Initialize state covariance matrix if it is empty. If uninitialized,
-    // the default value is a M-by-M identity matrix.
+    // Initialize state covariance matrix if it is empty. The default value is a
+    // M-by-M identity matrix.
     bool state_cov_uninitialized = is_mat_empty(state_covariance);
     if (state_cov_uninitialized)
     {
-        initialize_using_identity_matrix(state_covariance, M_);
+        initialize_from_identity_matrix(state_covariance, M_);
     }
 
-    // Initialize process noise matrix if it is empty. If uninitialized,
-    // the default value is a M-by-M identity matrix.
+    // Initialize process noise matrix if it is empty. The default value is a
+    // M-by-M identity matrix.
     bool proc_noise_uninitialized = is_mat_empty(process_noise);
     if (proc_noise_uninitialized)
     {
-        initialize_using_identity_matrix(process_noise, M_);
+        initialize_from_identity_matrix(process_noise, M_);
+    }
+
+    // Initialize the state vector if it is empty. The default value is a
+    // column vector of length M where all values are zeros.
+    bool state_uninitialized = is_mat_empty(state);
+    if (state_uninitialized)
+    {
+        initialize_column_vector(state, M_);
+    }
+
+    // Initialize measurment noise matrix if it is empty. The default value is a
+    // N-by-N identity matrix.
+    bool meas_noise_uninitialized = is_mat_empty(measurement_noise);
+    if (meas_noise_uninitialized)
+    {
+        initialize_from_identity_matrix(measurement_noise, M_);
     }
 }
 
