@@ -4,7 +4,7 @@ CC = g++
 CPPFLAGS = -std=c++20 -Wall -DBOOST_TEST_DYN_LINK
 TARGET = tMatrix tKalmanFilter
 
-MY_BOOST_DIR = /usr/local/lib/boost_1_75_0
+MY_BOOST_DIR = /usr/local/lib/boost_1_75_0 # Set boost directory here.
 INCLUDES = -I$(MY_BOOST_DIR) -I../include/
 LIBS = -lboost_unit_test_framework
 

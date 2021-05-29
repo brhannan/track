@@ -9,9 +9,6 @@
 #include <stdexcept>
 #include <matrix_utils.hpp>
 
-// TODO:
-//
-
 namespace track
 {
 
