@@ -133,10 +133,6 @@ void KalmanFilter<T>::predict()
     // Store the predicted state.
     state = x;
     // Propagate the state covariance.
-    //  TODO:
-    //      * calculate P+ = F * P * F' + process_noise here
-    //      * then store the result in state_covariance
-    state_covariance =
         state_transition_matrix * state_covariance * \
         state_transition_matrix.transpose() + process_noise;
 }
