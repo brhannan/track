@@ -78,6 +78,87 @@ BOOST_AUTO_TEST_CASE(testMatrixMultiply)
     BOOST_CHECK_EQUAL(res(1,1), 4);
 }
 
+// Test operator* with sclar and matrix arguments.
+BOOST_AUTO_TEST_CASE(testScalarMultiply)
+{
+    // Test scalar*mat.
+    std::vector<double> v1 = {1,0,0,1};
+    track::Matrix<double> m(v1,2,2);
+    double c = 2;
+    track::Matrix<double> res = c * m;
+    BOOST_CHECK(res.num_rows() == 2);
+    BOOST_CHECK(res.num_cols() == 2);
+    BOOST_CHECK_EQUAL(res(0,0), 2);
+    BOOST_CHECK_EQUAL(res(0,1), 0);
+    BOOST_CHECK_EQUAL(res(1,0), 0);
+    BOOST_CHECK_EQUAL(res(1,1), 2);
+    // Test mat*scalar.
+    track::Matrix<double> res2 = m * c;
+    BOOST_CHECK_EQUAL(res2(0,0), 2);
+    BOOST_CHECK_EQUAL(res2(0,1), 0);
+    BOOST_CHECK_EQUAL(res2(1,0), 0);
+    BOOST_CHECK_EQUAL(res2(1,1), 2);
+}
+
+// Test operator+. (Matrix+matrix and matrix+scalar).
+BOOST_AUTO_TEST_CASE(testMatrixAdd)
+{
+    // Matrix + matrix
+    std::vector<double> v1 = {1,0,0,1};
+    track::Matrix<double> m1(v1,2,2);
+    std::vector<double> v2 = {1,2,3,4};
+    track::Matrix<double> m2(v2,2,2);
+    track::Matrix<double> res = m1 + m2;
+    BOOST_CHECK(res.num_rows() == 2);
+    BOOST_CHECK(res.num_cols() == 2);
+    BOOST_CHECK_EQUAL(res(0,0), 2);
+    BOOST_CHECK_EQUAL(res(0,1), 2);
+    BOOST_CHECK_EQUAL(res(1,0), 3);
+    BOOST_CHECK_EQUAL(res(1,1), 5);
+    // Scalar + matrix
+    track::Matrix<double> res2 = (double)1 + m1;
+    BOOST_CHECK_EQUAL(res2(0,0), 2);
+    BOOST_CHECK_EQUAL(res2(0,1), 1);
+    BOOST_CHECK_EQUAL(res2(1,0), 1);
+    BOOST_CHECK_EQUAL(res2(1,1), 2);
+    // Matrix + scalar
+    track::Matrix<double> res3 = m1 + (double)1;
+    BOOST_CHECK_EQUAL(res3(0,0), 2);
+    BOOST_CHECK_EQUAL(res3(0,1), 1);
+    BOOST_CHECK_EQUAL(res3(1,0), 1);
+    BOOST_CHECK_EQUAL(res3(1,1), 2);
+}
+
+// Test matrix subtraction.
+BOOST_AUTO_TEST_CASE(testMatrixSubtract)
+{
+    std::vector<double> v1 = {1,0,0,1};
+    track::Matrix<double> m1(v1,2,2);
+    std::vector<double> v2 = {1,2,3,4};
+    track::Matrix<double> m2(v2,2,2);
+    track::Matrix<double> res = m2 - m1;
+    BOOST_CHECK(res.num_rows() == 2);
+    BOOST_CHECK(res.num_cols() == 2);
+    BOOST_CHECK_EQUAL(res(0,0), 0);
+    BOOST_CHECK_EQUAL(res(0,1), 2);
+    BOOST_CHECK_EQUAL(res(1,0), 3);
+    BOOST_CHECK_EQUAL(res(1,1), 3);
+}
+
+// Test operator/.
+BOOST_AUTO_TEST_CASE(testScalarDivide)
+{
+    std::vector<double> v = {2,4,4,2};
+    track::Matrix<double> m(v,2,2);
+    track::Matrix<double> res = m/(double)2;
+    BOOST_CHECK(res.num_rows() == 2);
+    BOOST_CHECK(res.num_cols() == 2);
+    BOOST_CHECK_EQUAL(res(0,0), 1);
+    BOOST_CHECK_EQUAL(res(0,1), 2);
+    BOOST_CHECK_EQUAL(res(1,0), 2);
+    BOOST_CHECK_EQUAL(res(1,1), 1);
+}
+
 // Check that operator () indexes the matrix value as expected.
 BOOST_AUTO_TEST_CASE(testParens)
 {

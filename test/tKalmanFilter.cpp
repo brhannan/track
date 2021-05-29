@@ -3,6 +3,7 @@
 
 #include <KalmanFilter.hpp>
 
+// Test default constructor, default type.
 BOOST_AUTO_TEST_CASE(testDefaultConstrutor)
 {
     track::KalmanFilter<> kf;

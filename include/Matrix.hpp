@@ -9,6 +9,8 @@
 #include <stdexcept>
 #include <matrix_utils.hpp>
 
+// TODO:
+//
 
 namespace track
 {
@@ -52,17 +54,35 @@ public:
 
     boost::numeric::ublas::matrix<T> data;
 
-    T operator()(int row_ix, int col_ix)
+    // Index into a matrix.
+    T operator()(const int row_ix, const int col_ix)
     {
         return data(row_ix, col_ix);
     }
 
-    Matrix<T>  operator*(Matrix<T>& M)
+    // Matrix product.
+    Matrix<T> operator*(const Matrix<T>& M)
     {
         using namespace boost::numeric;
-        ublas::matrix<T> mt = ublas::prod(data, M.data);
-        Matrix<T> res(mt);
-        return res;
+        return Matrix<T>( ublas::prod(data, M.data) );
+    }
+
+    // Matrix addition.
+    Matrix<T> operator+(const Matrix<T>& M)
+    {
+        return Matrix<T>(data + M.data);
+    }
+
+    // Matrix subtraction.
+    Matrix<T> operator-(const Matrix<T>& M)
+    {
+        return Matrix<T>(data - M.data);
+    }
+
+    // Unary -.
+    Matrix<T> operator-()
+    {
+        return Matrix<T>(-data);
     }
 
     Matrix<T> transpose()
@@ -151,6 +171,59 @@ Matrix<T>::Matrix(boost::numeric::ublas::matrix<T> m)
 // Default constructor.
 template <class T>
 Matrix<T>::Matrix() {}
+
+// Implements scalar*matrix product.
+template <class T>
+Matrix<T> operator*(const T left, const Matrix<T>& right)
+{
+    return Matrix<T>( left * right.data );
+}
+
+// Implements matrix*scalar product.
+template <class T>
+Matrix<T> operator*(const Matrix<T>& left, const T right)
+{
+    return Matrix<T>( right * left.data );
+}
+
+// Implements division matrix/scalar.
+template <class T>
+Matrix<T> operator/(const Matrix<T>& left, const T right)
+{
+    return Matrix<T>( left.data / right );
+}
+
+// Implements scalar+matrix product.
+template <class T>
+Matrix<T> operator+(const T left, const Matrix<T>& right)
+{
+    Matrix<T> m(right);
+    Matrix<T> M0(right);
+    for (auto i=0; i<M0.num_rows(); i++)
+    {
+        for (auto j=0; j<M0.num_cols(); j++)
+        {
+            m.data(i,j) = M0(i,j) + left;
+        }
+    }
+    return m;
+}
+
+// Implements matrix+scalar product.
+template <class T>
+Matrix<T> operator+(const Matrix<T>& left, const T right)
+{
+    Matrix<T> m(left);
+    Matrix<T> M0(left);
+    for (auto i=0; i<M0.num_rows(); i++)
+    {
+        for (auto j=0; j<M0.num_cols(); j++)
+        {
+            m.data(i,j) = M0(i,j) + right;
+        }
+    }
+    return m;
+}
 
 } // namespace track
 
