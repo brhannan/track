@@ -1,5 +1,11 @@
 # track
-Tracking filters.
+**track** is a C++ state estimation and tracking filter library.
+
+<!--
+## Examples
+
+TODO: add examples.
+-->
 
 ## Dependencies
 [Boost](https://www.boost.org)  
