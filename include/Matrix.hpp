@@ -13,7 +13,7 @@
 namespace track
 {
 
-// Class track::Matrix allows simple operations with ublas::matrix objects.
+// Class track::Matrix allows matrix operations with ublas::matrix objects.
 // Matrix elements may be provided as a std::vector or a ublas::matrix.
 //
 // The state transition matrix is a real-valued M-by-M matrix where
@@ -33,30 +33,64 @@ namespace track
 //          // manually set its values.
 //          boost::numeric::ublas::identity_matrix<double> m(4,4);
 //          track::Matrix<double> mat(m);
+//
+//      // Example 3: Initialize a 4-by-4 matrix of all zeros.
+//          track::Matrix<double> mat(4,4)
+//
+//      // Example 4: Multiply two matrices.
+//          track::Matrix<int> a(3,2);
+//          track::Matrix<int> b(2,4);
+//          track::Matrix<int> c = a * b;
 template <class T = double>
 class Matrix
 {
 public:
-    boost::numeric::ublas::matrix<T> data;
-
-    // Validates matrix dimensions.
-    // num_elems is the actual number of elements; that is, the number of
-    // elements in the container that holds the values to be copied to
-    // member variable data. num_rows and num_cols specify the number of
-    // rows/cols of the desired matrix.
-    void validate_dimensions(int num_elems, int num_rows,
-        int num_cols);
-
     Matrix(std::vector<T>& v, int num_rows, int num_cols);
+    Matrix(int num_rows, int num_cols);
     Matrix(boost::numeric::ublas::matrix<T> m);
     Matrix();
+
+    boost::numeric::ublas::matrix<T> data;
 
     T operator()(int row_ix, int col_ix)
     {
         return data(row_ix, col_ix);
     }
+
+    Matrix<T>  operator*(Matrix<T>& M)
+    {
+        using namespace boost::numeric;
+        ublas::matrix<T> mt = ublas::prod(data, M.data);
+        Matrix<T> res(mt);
+        return res;
+    }
+
+    Matrix<T> transpose()
+    {
+        using namespace boost::numeric;
+        ublas::matrix<T> data_transposed = ublas::trans(data);
+        Matrix<T> m(data_transposed);
+        return  m;
+    }
+
+    int num_rows()
+    {
+        return data.size1();
+    }
+
+    int num_cols()
+    {
+        return data.size2();
+    }
+
+    void validate_dimensions(int num_elems, int num_rows, int num_cols);
 };
 
+// Validates matrix dimensions.
+// num_elems is the actual number of elements; that is, the number of
+// elements in the container that holds the values to be copied to
+// member variable data. num_rows and num_cols specify the number of
+// rows/cols of the desired matrix.
 template <class T>
 void Matrix<T>::validate_dimensions(int num_elems, int num_rows, int num_cols)
 {
@@ -90,8 +124,16 @@ Matrix<T>::Matrix(std::vector<T>& v, int num_rows,
     int num_cols)
 {
     validate_dimensions(v.size(), num_rows, num_cols);
-    boost::numeric::ublas::matrix<T> m = create_matrix_from_vector(v, num_rows,
-        num_cols);
+    boost::numeric::ublas::matrix<T> m = track::create_matrix_from_vector(v,
+        num_rows, num_cols);
+    data = m;
+}
+
+// Constructs a num_rows-by-num_cols matrix of zeros.
+template <class T>
+Matrix<T>::Matrix(int num_rows, int num_cols)
+{
+    boost::numeric::ublas::zero_matrix<T> m(num_rows, num_cols);
     data = m;
 }
 
@@ -99,8 +141,8 @@ Matrix<T>::Matrix(std::vector<T>& v, int num_rows,
 template <class T>
 Matrix<T>::Matrix(boost::numeric::ublas::matrix<T> m)
 {
-    int num_rows = m.size1;
-    int num_cols = m.size2;
+    int num_rows = m.size1();
+    int num_cols = m.size2();
     int mat_size = num_rows * num_cols;
     validate_dimensions(mat_size, num_rows, num_cols);
     data = m;

@@ -3,14 +3,14 @@
 
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/storage.hpp>
-#include <stdexcept>
+#include <TrackingFilter.hpp>
 #include <Matrix.hpp>
 
 namespace track
 {
 
 template <class T = double>
-class KalmanFilter
+class KalmanFilter : public track::TrackingFilter<T>
 {
 public:
     KalmanFilter(track::Matrix<T> F, track::Matrix<T> H);
@@ -27,8 +27,8 @@ public:
     track::Matrix<T> measurement_noise;
 
     void init();
-    // predict();
-    // update();
+    void predict();
+    void update();
 
 protected:
     int M_; // Length of the state vector.
@@ -40,9 +40,6 @@ private:
     int get_num_states();
     int get_num_measurements();
     int get_num_controls();
-    bool is_mat_empty(track::Matrix<T>& mat);
-    void initialize_from_identity_matrix(track::Matrix<T>& mat, int L, T v = 1);
-    void initialize_column_vector(track::Matrix<T>& vec, int L, T v = 0);
 };
 
 template <class T>
@@ -86,40 +83,6 @@ int KalmanFilter<T>::get_num_controls()
     return control_matrix.data.size2();
 }
 
-// Returns true if mat is empty.
-template <class T>
-bool KalmanFilter<T>::is_mat_empty(track::Matrix<T>& mat)
-{
-    return (mat.data.size1()==0) && (mat.data.size2()==0);
-}
-
-// Initialize a square matrix by scaling an identity matrix of dimension L. The
-// matrix is scaled by scalar v. The result is returned to mat.
-template <class T>
-void KalmanFilter<T>::initialize_from_identity_matrix(track::Matrix<T>& mat,
-    int L, T v)
-{
-    boost::numeric::ublas::identity_matrix<T> ident(L);
-    mat.data = v * ident;
-}
-
-// Initialize a column vector by scaling a vector of dimension L. All values
-// are set to value v (default 0).
-template <class T>
-void KalmanFilter<T>::initialize_column_vector(track::Matrix<T>& vec, int L, T v)
-{
-    boost::numeric::ublas::matrix<T> m(L,1);
-    for (auto i=0; i<m.size1(); i++)
-    {
-        for (auto j=0; j<m.size2(); j++)
-        {
-            m(i,j) = v;
-        }
-    }
-    vec.data = m;
-}
-
-
 template <class T>
 void KalmanFilter<T>::init()
 {
@@ -130,35 +93,59 @@ void KalmanFilter<T>::init()
 
     // Initialize state covariance matrix if it is empty. The default value is a
     // M-by-M identity matrix.
-    bool state_cov_uninitialized = is_mat_empty(state_covariance);
+    bool state_cov_uninitialized = this->is_mat_empty(state_covariance);
     if (state_cov_uninitialized)
     {
-        initialize_from_identity_matrix(state_covariance, M_);
+        this->init_from_identity_mat(state_covariance, M_);
     }
 
     // Initialize process noise matrix if it is empty. The default value is a
     // M-by-M identity matrix.
-    bool proc_noise_uninitialized = is_mat_empty(process_noise);
+    bool proc_noise_uninitialized = this->is_mat_empty(process_noise);
     if (proc_noise_uninitialized)
     {
-        initialize_from_identity_matrix(process_noise, M_);
+        this->init_from_identity_mat(process_noise, M_);
     }
 
     // Initialize the state vector if it is empty. The default value is a
     // column vector of length M where all values are zeros.
-    bool state_uninitialized = is_mat_empty(state);
+    bool state_uninitialized = this->is_mat_empty(state);
     if (state_uninitialized)
     {
-        initialize_column_vector(state, M_);
+        this->init_column_vector(state, M_);
     }
 
     // Initialize measurment noise matrix if it is empty. The default value is a
     // N-by-N identity matrix.
-    bool meas_noise_uninitialized = is_mat_empty(measurement_noise);
+    bool meas_noise_uninitialized = this->is_mat_empty(measurement_noise);
     if (meas_noise_uninitialized)
     {
-        initialize_from_identity_matrix(measurement_noise, M_);
+        this->init_from_identity_mat(measurement_noise, M_);
     }
+}
+
+// Predicts state, state error covariance.
+template <class T>
+void KalmanFilter<T>::predict()
+{
+    // Propagate the state transition matrix.
+    track::Matrix<T> x = state_transition_matrix * state;
+    // Store the predicted state.
+    state = x;
+    // Propagate the state covariance.
+    //  TODO:
+    //      * calculate P+ = F * P * F' + process_noise here
+    //      * then store the result in state_covariance
+    state_covariance =
+        state_transition_matrix * state_covariance * state_transition_matrix.transpose() +
+        process_noise;
+}
+
+// Updates state, state error covariance.
+template <class T>
+void KalmanFilter<T>::update()
+{
+    // TOOD: add update logic here.
 }
 
 } // namespace track

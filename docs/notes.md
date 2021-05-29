@@ -101,6 +101,8 @@ KF::update(const std::vector<T>& y)
     - [x] Add `init()`.  
     - [ ] Add `predict()`.  
     - [ ] Add `update()`.  
+- [ ] Add helper functions for filter init (2d constant acceleration, 3d
+    constant acceleration, etc.).
 - [ ] Write EKF class.
 
 <!-- ### Policy classes

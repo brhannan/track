@@ -3,8 +3,16 @@
 
 #include <KalmanFilter.hpp>
 
-BOOST_AUTO_TEST_CASE( smoke )
+BOOST_AUTO_TEST_CASE(testDefaultConstrutor)
+{
+    track::KalmanFilter<> kf;
+    BOOST_CHECK(true);
+}
+
+// Check that init() executes succesfully after constructing default KF.
+BOOST_AUTO_TEST_CASE(testInit)
 {
     track::KalmanFilter<double> kf;
+    kf.init();
     BOOST_CHECK(true);
 }

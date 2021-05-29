@@ -5,6 +5,10 @@
 #include <boost/numeric/ublas/storage.hpp>
 #include <vector>
 #include <stdexcept>
+#include <Matrix.hpp>
+
+namespace track
+{
 
 // Returns a m-by-n matrix containing the data specified by vector v. v contains
 // the row-unwrapped elements of the matrix.
@@ -20,5 +24,7 @@ boost::numeric::ublas::matrix<T,F> create_matrix_from_vector(const std::vector<T
     std::copy(v.begin(), v.end(), elems.begin());
     return boost::numeric::ublas::matrix<T>(m, n, elems);
 }
+
+} // namespace track
 
 #endif // MATRIX_UTILS_H_
