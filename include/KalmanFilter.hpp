@@ -28,7 +28,7 @@ public:
 
     void init();
     void predict();
-    void update();
+    void update(track::Matrix<T>& y);
 
 protected:
     int M_; // Length of the state vector.
@@ -137,13 +137,13 @@ void KalmanFilter<T>::predict()
     //      * calculate P+ = F * P * F' + process_noise here
     //      * then store the result in state_covariance
     state_covariance =
-        state_transition_matrix * state_covariance * state_transition_matrix.transpose() +
-        process_noise;
+        state_transition_matrix * state_covariance * \
+        state_transition_matrix.transpose() + process_noise;
 }
 
 // Updates state, state error covariance.
 template <class T>
-void KalmanFilter<T>::update()
+void KalmanFilter<T>::update(track::Matrix<T>& y)
 {
     // TOOD: add update logic here.
 }
