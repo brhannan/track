@@ -6,21 +6,14 @@
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/storage.hpp>
 #include <boost/numeric/ublas/lu.hpp>
+#include <boost/numeric/ublas/triangular.hpp>
+#include <boost/numeric/ublas/lu.hpp>
 #include <vector>
 #include <stdexcept>
 #include <matrix_utils.hpp>
 
-// Used for matrix inverse.
-#include <boost/numeric/ublas/vector.hpp>
-#include <boost/numeric/ublas/vector_proxy.hpp>
-#include <boost/numeric/ublas/triangular.hpp>
-#include <boost/numeric/ublas/lu.hpp>
-#include <boost/numeric/ublas/io.hpp>
-
 namespace track
 {
-
-// enum MatrixType { ZEROS, ONES, IDENTITY };
 
 // Class track::Matrix allows matrix operations with ublas::matrix objects.
 // Matrix elements may be provided as a std::vector or a ublas::matrix.
@@ -60,6 +53,11 @@ namespace track
 //          // Multiplication, division by a scalar.
 //          track::Matrix<double> m3  = x * m;
 //          track::Matrix<double> m4 = m / x;
+//
+//      // Example 6: Matrix inverse.
+//          std::vector<double> v {1, 2, 3, 4};
+//          track::Matrix<double> m(v,2,2);
+//          track::Matrix<double> m_inv = m.inverse();
 template <class T = double>
 class Matrix
 {
@@ -113,8 +111,6 @@ public:
     }
 
     // Calculates matrix inverse using LU inversion.
-    // See:
-    // crystalclearsoftware.com/cgi-bin/boost_wiki/wiki.pl?LU_Matrix_Inversion
     Matrix<T> inverse()
     {
          // TODO: Error if matrix is not square.
@@ -148,26 +144,6 @@ private:
     static bool inverse_impl(const boost::numeric::ublas::matrix<T>& input,
         boost::numeric::ublas::matrix<T>& inverse);
 };
-
-// Calculates inverse of input. Result is written to parameter inverse.
-template <class T>
-bool Matrix<T>::inverse_impl(const boost::numeric::ublas::matrix<T>& input,
-    boost::numeric::ublas::matrix<T>& inverse)
-{
-    using namespace boost::numeric::ublas;
-    typedef permutation_matrix<std::size_t> pmatrix;
-    matrix<T> A(input);
-    pmatrix pm(A.size1());
-    // LU decomposition
-    int res = lu_factorize(A, pm);
-    if (res != 0)
-    {
-        return false;
-    }
-    inverse.assign(identity_matrix<T>(A.size1()));
-    lu_substitute(A, pm, inverse);
-    return true;
-}
 
 // Validates matrix dimensions.
 // num_elems is the actual number of elements; that is, the number of
@@ -230,6 +206,8 @@ Matrix<T>::Matrix(boost::numeric::ublas::matrix<T> m)
     validate_dimensions(mat_size, num_rows, num_cols);
     data = m;
 }
+
+// enum MatrixType { ZEROS, ONES, IDENTITY };
 
 // template <class T>
 // Matrix<T>::Matrix(track::MatrixType mt, int num_rows, int num_cols)
@@ -309,6 +287,27 @@ Matrix<T> operator+(const Matrix<T>& left, const T right)
         }
     }
     return m;
+}
+
+// Calculates inverse of input. Result is written to parameter inverse. Output
+// is false if LU factorization fails.
+template <class T>
+bool Matrix<T>::inverse_impl(const boost::numeric::ublas::matrix<T>& input,
+    boost::numeric::ublas::matrix<T>& inverse)
+{
+    using namespace boost::numeric::ublas;
+    typedef permutation_matrix<std::size_t> pmatrix;
+    matrix<T> A(input);
+    pmatrix pm(A.size1());
+    // LU decomposition
+    int res = lu_factorize(A, pm);
+    if (res != 0)
+    {
+        return false;
+    }
+    inverse.assign(identity_matrix<T>(A.size1()));
+    lu_substitute(A, pm, inverse);
+    return true;
 }
 
 } // namespace track
