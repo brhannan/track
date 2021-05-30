@@ -1,4 +1,4 @@
-// Abstract base class for classes that implement tracking filter matrices.
+// track::Matrix class.
 
 #ifndef MATRIX_H_
 #define MATRIX_H_
