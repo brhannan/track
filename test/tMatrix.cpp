@@ -162,20 +162,21 @@ BOOST_AUTO_TEST_CASE(testScalarDivide)
 // Check that operator () indexes the matrix value as expected.
 BOOST_AUTO_TEST_CASE(testParens)
 {
-    std::vector<double> v1 = {1,0,0,1};
-    track::Matrix<double> m(v1,2,2);
+    std::vector<double> v = {1,0,0,1};
+    track::Matrix<double> m(v,2,2);
     BOOST_CHECK_EQUAL(m(0,0), 1);
     BOOST_CHECK_EQUAL(m(0,1), 0);
 }
 
-// Test matrix transpose operation.
-BOOST_AUTO_TEST_CASE(testTranspose)
+// Test matrix inverse operation.
+BOOST_AUTO_TEST_CASE(testInverse)
 {
-    std::vector<double> v1 = {1,2,3,4};
-    track::Matrix<double> m(v1,2,2);
-    track::Matrix<double> res = m.transpose();
-    BOOST_CHECK_EQUAL(res(0,0), 1);
-    BOOST_CHECK_EQUAL(res(1,0), 2);
-    BOOST_CHECK_EQUAL(res(0,1), 3);
-    BOOST_CHECK_EQUAL(res(1,1), 4);
+    std::vector<double> v = {1,2,3,4};
+    track::Matrix<double> m(v,2,2);
+    track::Matrix<double> res = m.inverse();
+    const double tol = 1e-12;
+    BOOST_CHECK_CLOSE(res(0,0), (double)-2, tol);
+    BOOST_CHECK_CLOSE(res(0,1), (double)1, tol);
+    BOOST_CHECK_CLOSE(res(1,0), (double)1.5, tol);
+    BOOST_CHECK_CLOSE(res(1,1), (double)-0.5, tol);
 }

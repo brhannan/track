@@ -5,12 +5,22 @@
 
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/storage.hpp>
+#include <boost/numeric/ublas/lu.hpp>
 #include <vector>
 #include <stdexcept>
 #include <matrix_utils.hpp>
 
+// Used for matrix inverse.
+#include <boost/numeric/ublas/vector.hpp>
+#include <boost/numeric/ublas/vector_proxy.hpp>
+#include <boost/numeric/ublas/triangular.hpp>
+#include <boost/numeric/ublas/lu.hpp>
+#include <boost/numeric/ublas/io.hpp>
+
 namespace track
 {
+
+// enum MatrixType { ZEROS, ONES, IDENTITY };
 
 // Class track::Matrix allows matrix operations with ublas::matrix objects.
 // Matrix elements may be provided as a std::vector or a ublas::matrix.
@@ -40,6 +50,16 @@ namespace track
 //          track::Matrix<int> a(3,2);
 //          track::Matrix<int> b(2,4);
 //          track::Matrix<int> c = a * b;
+//
+//      // Example 5: Scalar operations.
+//          // Scalar addition, subtraction.
+//          track::Matrix<double> m(2,2);
+//          double x = 5;
+//          track::Matrix<double> m1 = m - x;
+//          track::Matrix<double> m2 = m + x;
+//          // Multiplication, division by a scalar.
+//          track::Matrix<double> m3  = x * m;
+//          track::Matrix<double> m4 = m / x;
 template <class T = double>
 class Matrix
 {
@@ -47,6 +67,7 @@ public:
     Matrix(std::vector<T>& v, int num_rows, int num_cols);
     Matrix(int num_rows, int num_cols);
     Matrix(boost::numeric::ublas::matrix<T> m);
+    // Matrix(track::MatrixType mt, int num_rows, int num_cols);
     Matrix();
 
     boost::numeric::ublas::matrix<T> data;
@@ -82,6 +103,7 @@ public:
         return Matrix<T>(-data);
     }
 
+    // Transposes a matrix.
     Matrix<T> transpose()
     {
         using namespace boost::numeric;
@@ -90,18 +112,62 @@ public:
         return  m;
     }
 
+    // Calculates matrix inverse using LU inversion.
+    // See:
+    // crystalclearsoftware.com/cgi-bin/boost_wiki/wiki.pl?LU_Matrix_Inversion
+    Matrix<T> inverse()
+    {
+         // TODO: Error if matrix is not square.
+         // TODO: Error if nonsingular.
+         using namespace boost::numeric;
+         // Initialize output.
+         Matrix<T> res(data.size1(),data.size2());
+         bool inv_status = inverse_impl(data,res.data);
+         if (!inv_status)
+         {
+             throw std::runtime_error("Unable to calculate matrix inverse.");
+         }
+         return res;
+    }
+
+    // Gets number of matrix rows.
     int num_rows()
     {
         return data.size1();
     }
 
+    // Gets number of matrix columns.
     int num_cols()
     {
         return data.size2();
     }
 
     void validate_dimensions(int num_elems, int num_rows, int num_cols);
+
+private:
+    static bool inverse_impl(const boost::numeric::ublas::matrix<T>& input,
+        boost::numeric::ublas::matrix<T>& inverse);
 };
+
+// Calculates inverse of input. Result is written to parameter inverse.
+template <class T>
+bool Matrix<T>::inverse_impl(const boost::numeric::ublas::matrix<T>& input,
+    boost::numeric::ublas::matrix<T>& inverse)
+{
+    using namespace boost::numeric::ublas;
+    typedef permutation_matrix<std::size_t> pmatrix;
+    matrix<T> A(input);
+    pmatrix pm(A.size1());
+    // LU decomposition
+    int res = lu_factorize(A, pm);
+    if (res != 0)
+    {
+        return false;
+    }
+    inverse.assign(identity_matrix<T>(A.size1()));
+    lu_substitute(A, pm, inverse);
+    return true;
+}
 
 // Validates matrix dimensions.
 // num_elems is the actual number of elements; that is, the number of
@@ -164,6 +230,29 @@ Matrix<T>::Matrix(boost::numeric::ublas::matrix<T> m)
     validate_dimensions(mat_size, num_rows, num_cols);
     data = m;
 }
+
+// template <class T>
+// Matrix<T>::Matrix(track::MatrixType mt, int num_rows, int num_cols)
+// {
+//     switch(mt)
+//     {
+//         case ZEROS:
+//             boost::numeric::ublas::zero_matrix<T> m(num_rows,num_cols);
+//             break;
+//         // case ONES:
+//         //     std::vector<T> v(num_rows*num_cols, 1);
+//         //     boost::numeric::ublas::matrix<T> m =
+//         //         track::create_matrix_from_vector(v, num_rows, num_cols);
+//         //     break;
+//         // case IDENTITY:
+//         //     boost::numeric::ublas::identity_matrix<T> m(num_rows,num_cols);
+//         //     break;
+//         default:
+//             // throw std::invalid_argument("Invalid MatrixType value.");
+//             boost::numeric::ublas::identity_matrix<T> m(num_rows,num_cols);
+//     }
+//     return Matrix<T>(m);
+// }
 
 // Default constructor.
 template <class T>

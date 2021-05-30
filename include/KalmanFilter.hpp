@@ -133,7 +133,7 @@ void KalmanFilter<T>::predict()
     // Store the predicted state.
     state = x;
     // Propagate the state covariance.
-    state_covariance = 
+    state_covariance =
         state_transition_matrix * state_covariance * \
         state_transition_matrix.transpose() + process_noise;
 }
@@ -142,7 +142,22 @@ void KalmanFilter<T>::predict()
 template <class T>
 void KalmanFilter<T>::update(track::Matrix<T>& y)
 {
-    // TOOD: add update logic here.
+    // Calculate gain K.
+    track::Matrix<T> num = state_covariance * measurement_matrix.transpose();
+    track::Matrix<T> den =
+        measurement_matrix * state_covariance * measurement_matrix.transpose()
+        + measurement_noise;
+    // TODO: Add matrix inversion here.
+    track::Matrix<T> K = num * (double)1; // To be replaced by the line below.
+    // track::Matrix<T> K = num / den;
+    // Updade the state vector.
+    track::Matrix<T> x_plus = state + K*(y - measurement_matrix*state);
+    state = x_plus;
+    // Update the state covariance matrix.
+    track::Matrix<T> P_k_plus = state_covariance -
+        K * measurement_matrix * state_covariance;
+    // TODO: Ensure symmetry of P_k_plus here.
+    state_covariance = P_k_plus;
 }
 
 } // namespace track

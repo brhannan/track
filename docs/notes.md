@@ -97,10 +97,14 @@ KF::update(const std::vector<T>& y)
 
 - [x] Add tests.  
 - [x] Write track::Matrix class.    
+    - [x] Write matrix inversion method.
+    - [ ] Add is-invertible check.
 - [ ] Write KF class.  
     - [x] Add `init()`.  
-    - [ ] Add `predict()`.  
+    - [x] Add `predict()`.  
     - [ ] Add `update()`.  
+- [ ] Add example to README.
+- [ ] Detailed Matrix, KF documentation.
 - [ ] Add helper functions for filter init (2d constant acceleration, 3d
     constant acceleration, etc.).
 - [ ] Write EKF class.
