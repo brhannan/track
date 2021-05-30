@@ -16,10 +16,6 @@ namespace track
 {
 
 // Class track::Matrix allows matrix operations with ublas::matrix objects.
-// Matrix elements may be provided as a std::vector or a ublas::matrix.
-//
-// The state transition matrix is a real-valued M-by-M matrix where
-// M is the number of states.
 //
 // Examples:
 //
