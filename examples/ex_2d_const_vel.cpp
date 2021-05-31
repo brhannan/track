@@ -69,8 +69,6 @@ int main()
         // Get a measurement vector.
         double x_meas = x_true[k] + distribution(generator);
         double y_meas = y_true[k] + distribution(generator);
-        // std::vector<double> meas_vec = {x_meas, 0, y_meas, 0};
-        // Matrix<double> y(meas_vec,4,1);
         std::vector<double> meas_vec = {x_meas, y_meas};
         Matrix<double> y(meas_vec,2,1);
         // Step the filter.
@@ -87,7 +85,6 @@ int main()
         //     " " << x(3) << std::endl;
         // truthfile << x_true[k] << " " << vx_true[k] << " " << y_true[k] <<
         //     " " << vy_true[k] << std::endl;
-
     }
 
     // predfile.close();
