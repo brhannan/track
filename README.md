@@ -17,14 +17,14 @@ int main()
     double dt = 0.1; // sec
     KalmanFilter<double> kf("1d_const_vel", dt);
 
-    // Initialize state vector to x = 0, vx = 1.
-    std::vector init_state_vals = {0, 1};
+    // Initialize state vector to x = 0, v_x = 1.
+    std::vector init_state_vals = {0.001, 1.002};
     Matrix<double> state0(init_state_vals,2,1);
-    
+
     kf.state = state0;
     kf.init(); // Initialize and validate properties.
 
-    // Create a 2x1 measurement vector containing all-zeros.
+    // Create a 2x1 measurement vector.
     Matrix<double> y("zeros",2,1);
 
     // Step the filter once.
