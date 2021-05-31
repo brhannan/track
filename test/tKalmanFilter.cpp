@@ -76,7 +76,7 @@ BOOST_AUTO_TEST_CASE(test2DConstVelSim)
     double dt = 0.1;
     track::KalmanFilter<double> kf("2d_const_vel", dt);
     kf.init();
-    track::Matrix<double> y("zeros",4,1);
+    track::Matrix<double> y("zeros",2,1);
     kf.init();
     // Step the filter.
     kf.update(y);
