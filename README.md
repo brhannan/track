@@ -83,6 +83,9 @@ int main()
 }
 ```
 
+The 2D constant velocity example resuults are shown below. Truth values are
+marked with black dots. Estimated values are shown by the blue circles.
+
 ![](https://github.com/brhannan/track/blob/main/docs/images/kf_2d_const_vel.gif)
 
 
