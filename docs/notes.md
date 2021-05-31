@@ -44,6 +44,8 @@ Tracking filters: JPDA
          - [ ] 3D const vel
          - [ ] 3D const accel
     - [ ] Add support for control input.
+    - [ ] Improve error reporting for incompatible matrix dimensions. Name the
+            matrices that cause the problem and their dimensions.
 - [ ] Add example to README.
 - [ ] Detailed Matrix, KF documentation.
 - [ ] Add helper functions for filter init (2d constant acceleration, 3d

@@ -13,6 +13,8 @@
 #include <string>
 #include <matrix_utils.hpp>
 
+#include <iostream>
+
 namespace track
 {
 
@@ -79,6 +81,38 @@ public:
     T operator()(const int row_ix, const int col_ix)
     {
         return data(row_ix, col_ix);
+    }
+
+    // Index into a vector.
+    T operator()(const int ix)
+    {
+        int ix1, ix2;
+        int nrow = num_rows();
+        int ncol = num_cols();
+        if ( nrow>1 & ncol>1 )
+        {
+            throw std::invalid_argument("Two indices must be provided when "
+                "matrix does not contain a vector.");
+        }
+        if (nrow>1)
+        {
+            ix1 = ix;
+            ix2 = 0;
+        }
+        else
+        {
+            ix1 = 0;
+            ix2 = ix;
+        }
+        if ( ix1 > data.size1() )
+        {
+            throw std::invalid_argument("Index is out of range.");
+        }
+        if ( ix2 > data.size2() )
+        {
+            throw std::invalid_argument("Index is out of range.");
+        }
+        return data(ix1,ix2);
     }
 
     // Matrix product.

@@ -204,10 +204,14 @@ BOOST_AUTO_TEST_CASE(testScalarDivide)
 // Check that operator () indexes the matrix value as expected.
 BOOST_AUTO_TEST_CASE(testParens)
 {
+    // Index into matrix.
     std::vector<double> v = {1,0,0,1};
     track::Matrix<double> m(v,2,2);
     BOOST_CHECK_EQUAL(m(0,0), 1);
     BOOST_CHECK_EQUAL(m(0,1), 0);
+    // Index into vector.
+    track::Matrix<double> vec(v,4,1);
+    BOOST_CHECK_EQUAL(vec(0), 1);
 }
 
 // Test matrix inverse operation.
