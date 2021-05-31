@@ -18,7 +18,7 @@ int main()
     KalmanFilter<double> kf("1d_const_vel", dt);
 
     // Initialize state vector to x = 0, v_x = 1.
-    std::vector init_state_vals = {0.001, 1.002};
+    std::vector<double> init_state_vals = {0.001, 1.002};
     Matrix<double> state0(init_state_vals,2,1);
 
     kf.state = state0;
