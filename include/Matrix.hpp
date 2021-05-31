@@ -16,7 +16,10 @@
 namespace track
 {
 
-// Class track::Matrix allows matrix operations with ublas::matrix objects.
+// track::Matrix class.
+//
+// track::Matrix objects can be used for common matrix operations (addition,
+// subtraction, multiplication, matrix inverse, etc.).
 //
 // Examples:
 //
@@ -36,12 +39,17 @@ namespace track
 //      // Example 3: Initialize a 4-by-4 matrix of all zeros.
 //          track::Matrix<double> mat(4,4)
 //
-//      // Example 4: Multiply two matrices.
+//      // Example 4: Create a 3-by-3 identity matrix.
+//          track::Matrix<double> mat("identity",3,3);
+//          // Note: In addition to "identity", this Matrix constructor also
+//          // supports parameters "zeros" and "ones".
+//
+//      // Example 5: Multiply two matrices.
 //          track::Matrix<int> a(3,2);
 //          track::Matrix<int> b(2,4);
 //          track::Matrix<int> c = a * b;
 //
-//      // Example 5: Scalar operations.
+//      // Example 6: Scalar operations.
 //          // Scalar addition, subtraction.
 //          track::Matrix<double> m(2,2);
 //          double x = 5;
@@ -51,7 +59,7 @@ namespace track
 //          track::Matrix<double> m3  = x * m;
 //          track::Matrix<double> m4 = m / x;
 //
-//      // Example 6: Matrix inverse.
+//      // Example 7: Matrix inverse.
 //          std::vector<double> v {1, 2, 3, 4};
 //          track::Matrix<double> m(v,2,2);
 //          track::Matrix<double> m_inv = m.inverse();
