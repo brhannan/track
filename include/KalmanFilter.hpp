@@ -140,7 +140,7 @@ KalmanFilter<T>::KalmanFilter() : has_control_input(false) {};
 template <class T>
 int KalmanFilter<T>::get_num_states()
 {
-    return state_transition_matrix.data.size2();
+    return state_transition_matrix.data.size1();
 }
 
 // Returns measurement vector length from state transistion matrix (F). F is a
@@ -148,7 +148,7 @@ int KalmanFilter<T>::get_num_states()
 template <class T>
 int KalmanFilter<T>::get_num_measurements()
 {
-    return state_transition_matrix.data.size1();
+    return measurement_matrix.data.size1();
 }
 
 // Returns num. control inputs. The number of controls equals the number of
@@ -258,9 +258,9 @@ KFParams<T> KalmanFilter<T>::get_model_1d_const_vel(T dt)
     int M = 2;
     int N = 2;
     std::vector<T> stm_vals = {1, dt, 0, 1};
-    track::Matrix<T> F(stm_vals, M, M);
+    track::Matrix<T> F(stm_vals,M,M);
     std::vector<T> meas_vals = {1, 0, 0, 1};
-    track::Matrix<T> H(meas_vals, N, M);
+    track::Matrix<T> H(meas_vals,N,M);
     track::Matrix<T> Q("identity",M,M);
     track::Matrix<T> V("identity",N,N);
     // Return filter params in KFParams struct.
@@ -295,12 +295,20 @@ KFParams<T> KalmanFilter<T>::get_model_1d_const_vel(T dt)
 template <class T>
 KFParams<T> KalmanFilter<T>::get_model_2d_const_vel(T dt)
 {
-    int M = 2;
-    int N = 4;
-    std::vector<T> stm_vals = {1, dt, 0, 1};
-    track::Matrix<T> F(stm_vals, M, M);
-    std::vector<T> meas_vals = {1, 0, 0, 0,  0, 0, 1, 0, };
-    track::Matrix<T> H(meas_vals, N, M);
+    int M = 4;
+    int N = 2;
+    std::vector<T> stm_vals = {
+        1, dt, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, dt,
+        0, 0, 0, 1
+    };
+    track::Matrix<T> F(stm_vals,M,M);
+    std::vector<T> meas_vals = {
+        1, 0, 0, 0,
+        0, 0, 1, 0
+    };
+    track::Matrix<T> H(meas_vals,N,M);
     track::Matrix<T> Q("identity",M,M);
     track::Matrix<T> V("identity",N,N);
     // Return filter params in KFParams struct.
