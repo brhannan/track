@@ -39,8 +39,11 @@ Tracking filters: JPDA
     - [ ] Write model-based filter initialization helper functions.
          - [x] 1D const vel
          - [ ] 1D const accel
-         - [ ] 2D const vel
+         - [x] 2D const vel
          - [ ] 2D const accel
+         - [ ] 3D const vel
+         - [ ] 3D const accel
+    - [ ] Add support for control input.
 - [ ] Add example to README.
 - [ ] Detailed Matrix, KF documentation.
 - [ ] Add helper functions for filter init (2d constant acceleration, 3d

@@ -69,3 +69,18 @@ BOOST_AUTO_TEST_CASE(test1DConstVelSim)
     // If we made it this far, the test passes.
     BOOST_CHECK(true);
 }
+
+// Step KF after initializing a 2D const. vel. filter.
+BOOST_AUTO_TEST_CASE(test2DConstVelSim)
+{
+    double dt = 0.1;
+    track::KalmanFilter<double> kf("2d_const_vel", dt);
+    kf.init();
+    track::Matrix<double> y("zeros",4,1);
+    kf.init();
+    // Step the filter.
+    kf.update(y);
+    kf.predict();
+    // If we made it this far, the test passes.
+    BOOST_CHECK(true);
+}
