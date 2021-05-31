@@ -1,10 +1,11 @@
 // Kalman filter 1D constant velocity example.
 //
 // Constructs a KalmanFilter object and tracks a target traveling with
-// 1-dimensional constant velocity.
+// 1-dimensional constant velocity. Steps the filter 4 times and prints
+// predicted state values.
 //
 // Compile:
-//  g++ -std=c++11 -I../include -I/usr/local/lib/boost_1_75_0
+//  g++ -std=c++20 -I../include -I/usr/local/lib/boost_1_75_0
 //      ex_1d_const_vel.cpp -o ex_1d_const_vel
 
 #include <KalmanFilter.hpp>
@@ -41,7 +42,7 @@ int main()
         // containing position and velocity, respectively.
         Matrix<double> x = kf.state;
         std::cout << "x = " << x(0,0) << std::endl;
-        std::cout << "v_x = " << x(1,0) << std::endl;
+        std::cout << "v_x = " << x(1,0) << "\n" << std::endl;
     }
 
     return 0;
