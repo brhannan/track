@@ -1,12 +1,12 @@
-# track
-**track** is a C++ state estimation and tracking filter library.
+// Kalman filter 1D constant velocity example.
+//
+// Constructs a KalmanFilter object and tracks a target traveling with
+// 1-dimensional constant velocity.
+//
+// Compile:
+//  g++ -std=c++11 -I../include -I/usr/local/lib/boost_1_75_0
+//      ex_1d_const_vel.cpp -o ex_1d_const_vel
 
-## Examples
-
-Set up a Kalman filter for tracking a target that is expected to
-travel in one dimension with constant velocity. The filter runs at 10 Hz.
-
-```cpp
 #include <KalmanFilter.hpp>
 #include <iostream>
 
@@ -46,14 +46,3 @@ int main()
 
     return 0;
 }
-```
-
-## Dependencies
-[Boost](https://www.boost.org)  
-
-## Test
-
-To run the test suite:
-- Make sure that `MY_BOOST_DIR` in test/Makefile contains a valid path.
-- `cd` to /test.
-- Enter commands `make all` and then `sh runTests.sh`.
