@@ -19,14 +19,15 @@ int main()
 
     // Create measurement values.
     std::vector<double> x_vals = {0.001, 0.998, 2.003, 2.999};
-    std::vector<double> vx_vals = {0.001, 0.998, 2.003, 2.999};
+    std::vector<double> vx_vals = {1.021, 0.998, 1.101, 0.999};
 
     // Initialize state vector.
     std::vector<double> init_state_vals = {0, 1};
     Matrix<double> state0(init_state_vals,2,1);
-
     kf.state = state0;
-    kf.init(); // Initialize and validate properties.
+
+    // Initialize filter and validate properties.
+    kf.init();
 
     for (int k = 0; k < x_vals.size(); k++)
     {
@@ -36,12 +37,11 @@ int main()
         // Step the filter.
         kf.update(y);
         kf.predict();
-
         // Get the predicted state. The state vector is a column vector
         // containing position and velocity, respectively.
         Matrix<double> x = kf.state;
         std::cout << "x = " << x(0,0) << std::endl;
-        std::cout << "v_x = " << x(1,0) << std::endl;
+        std::cout << "v_x = " << x(1,0) << "\n" << std::endl;
     }
 
     return 0;
