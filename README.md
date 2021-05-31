@@ -83,7 +83,7 @@ int main()
 }
 ```
 
-![](https://github.com/brhannan/track/tree/main/docs/images/kf_2d_const_vel.gif)
+![](https://github.com/brhannan/track/blob/main/docs/images/kf_2d_const_vel.gif)
 
 
 ## Dependencies
