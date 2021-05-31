@@ -53,3 +53,19 @@ BOOST_AUTO_TEST_CASE(testStringConstruct1DConstVel)
     BOOST_CHECK_EQUAL(kf.measurement_noise(1,0), 0);
     BOOST_CHECK_EQUAL(kf.measurement_noise(1,1), 1);
 }
+
+// Step KF after initializing a 1D const. vel. filter.
+BOOST_AUTO_TEST_CASE(test1DConstVelSim)
+{
+    double dt = 0.1;
+    track::KalmanFilter<double> kf("1d_const_vel", dt);
+    kf.init();
+    // Get a 2x1 measurement, all zeros.
+    track::Matrix<double> y("zeros",2,1);
+    kf.init();
+    // Step the filter.
+    kf.update(y);
+    kf.predict();
+    // If we made it this far, the test passes.
+    BOOST_CHECK(true);
+}
