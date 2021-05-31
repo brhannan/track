@@ -125,10 +125,10 @@ KalmanFilter<T>::KalmanFilter(std::string motion_model, T dt)
     // }
     else
     {
-        throw std::invalid_argument("Expected input motion_model to equal one \
-            of the following: \"1d_const_vel\", \"2d_const_vel\", \
-            \"3d_const_vel\", \"1d_const_accel\", \"2d_const_accel\", \
-            \"3d_const_accel\" .");
+        throw std::invalid_argument("Expected input motion_model to equal one "
+            "of the following: \"1d_const_vel\", \"2d_const_vel\", "
+            "\"3d_const_vel\", \"1d_const_accel\", \"2d_const_accel\", "
+            "\"3d_const_accel\" .");
     }
 }
 

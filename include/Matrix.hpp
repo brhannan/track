@@ -172,8 +172,8 @@ void Matrix<T>::validate_dimensions(int num_elems, int num_rows, int num_cols)
     }
     if (num_elems != num_rows*num_cols)
     {
-        throw std::invalid_argument("Number of matrix elements must equal \
-            num_rows * num_cols.");
+        throw std::invalid_argument("Number of matrix elements must equal "
+            "num_rows * num_cols.");
     }
 }
 
@@ -236,8 +236,8 @@ Matrix<T>::Matrix(std::string mat_type, int num_rows, int num_cols)
     }
     else
     {
-        throw std::invalid_argument("Invalid mat_type value. mat_type is \
-            expected to equal \"identity\", \"ones\" or \"zeros\".");
+        throw std::invalid_argument("Invalid mat_type value. mat_type is "
+            "expected to equal \"identity\", \"ones\" or \"zeros\".");
     }
 }
 

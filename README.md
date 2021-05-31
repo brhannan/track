@@ -1,7 +1,7 @@
 # track
 **track** is a C++ state estimation and tracking filter library.
 
-## Examples
+## Example
 
 Set up a Kalman filter for tracking a target that is expected to
 travel in one dimension with constant velocity. The filter runs at 10 Hz.
