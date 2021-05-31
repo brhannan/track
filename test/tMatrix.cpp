@@ -2,6 +2,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include <Matrix.hpp>
+#include <iostream>
 
 // -----------------------------------------------------------------------------
 // Test constructors.
@@ -55,6 +56,47 @@ BOOST_AUTO_TEST_CASE(testVectorConstuctor)
     BOOST_CHECK_EQUAL(m(0,1), 2);
     BOOST_CHECK_EQUAL(m(1,0), 3);
     BOOST_CHECK_EQUAL(m(1,1), 4);
+}
+
+// Use string contructor and assert that matrix contents are correct.
+BOOST_AUTO_TEST_CASE(testStringConstuctor)
+{
+    track::Matrix<double> m("identity",2,2);
+    BOOST_CHECK_EQUAL(m.num_rows(), 2);
+    BOOST_CHECK_EQUAL(m.num_cols(), 2);
+    BOOST_CHECK_EQUAL(m(0,0), 1);
+    BOOST_CHECK_EQUAL(m(0,1), 0);
+    BOOST_CHECK_EQUAL(m(1,0), 0);
+    BOOST_CHECK_EQUAL(m(1,1), 1);
+
+    track::Matrix<double> m0("zeros",2,2);
+    BOOST_CHECK_EQUAL(m0.num_rows(), 2);
+    BOOST_CHECK_EQUAL(m0.num_cols(), 2);
+    BOOST_CHECK_EQUAL(m0(0,0), 0);
+    BOOST_CHECK_EQUAL(m0(0,1), 0);
+    BOOST_CHECK_EQUAL(m0(1,0), 0);
+    BOOST_CHECK_EQUAL(m0(1,1), 0);
+
+    track::Matrix<double> m1("ones",2,2);
+    BOOST_CHECK_EQUAL(m1.num_rows(), 2);
+    BOOST_CHECK_EQUAL(m1.num_cols(), 2);
+    BOOST_CHECK_EQUAL(m1(0,0), 1);
+    BOOST_CHECK_EQUAL(m1(0,1), 1);
+    BOOST_CHECK_EQUAL(m1(1,0), 1);
+    BOOST_CHECK_EQUAL(m1(1,1), 1);
+}
+
+// Check that matrices have correct dimensions.
+BOOST_AUTO_TEST_CASE(testDims)
+{
+    std::vector<double> v = {1,2,3,4,5,6};
+    track::Matrix<double> m0(v,2,3);
+    BOOST_CHECK_EQUAL(m0.num_rows(), 2);
+    BOOST_CHECK_EQUAL(m0.num_cols(), 3);
+
+    track::Matrix<int> m1("ones",5,6);
+    BOOST_CHECK_EQUAL(m1.num_rows(), 5);
+    BOOST_CHECK_EQUAL(m1.num_cols(), 6);
 }
 
 

@@ -10,6 +10,7 @@
 #include <boost/numeric/ublas/lu.hpp>
 #include <vector>
 #include <stdexcept>
+#include <string>
 #include <matrix_utils.hpp>
 
 namespace track
@@ -61,7 +62,7 @@ public:
     Matrix(std::vector<T>& v, int num_rows, int num_cols);
     Matrix(int num_rows, int num_cols);
     Matrix(boost::numeric::ublas::matrix<T> m);
-    // Matrix(track::MatrixType mt, int num_rows, int num_cols);
+    Matrix(std::string mat_type, int num_rows, int num_cols);
     Matrix();
 
     boost::numeric::ublas::matrix<T> data;
@@ -161,11 +162,6 @@ void Matrix<T>::validate_dimensions(int num_elems, int num_rows, int num_cols)
     {
         throw std::invalid_argument("Number of columns must be > 0.");
     }
-    if (num_rows != num_cols)
-    {
-        throw std::invalid_argument("State transition matrix must be a square \
-            matrix.");
-    }
     if (num_elems != num_rows*num_cols)
     {
         throw std::invalid_argument("Number of matrix elements must equal \
@@ -203,30 +199,39 @@ Matrix<T>::Matrix(boost::numeric::ublas::matrix<T> m)
     data = m;
 }
 
-// enum MatrixType { ZEROS, ONES, IDENTITY };
-
-// template <class T>
-// Matrix<T>::Matrix(track::MatrixType mt, int num_rows, int num_cols)
-// {
-//     switch(mt)
-//     {
-//         case ZEROS:
-//             boost::numeric::ublas::zero_matrix<T> m(num_rows,num_cols);
-//             break;
-//         // case ONES:
-//         //     std::vector<T> v(num_rows*num_cols, 1);
-//         //     boost::numeric::ublas::matrix<T> m =
-//         //         track::create_matrix_from_vector(v, num_rows, num_cols);
-//         //     break;
-//         // case IDENTITY:
-//         //     boost::numeric::ublas::identity_matrix<T> m(num_rows,num_cols);
-//         //     break;
-//         default:
-//             // throw std::invalid_argument("Invalid MatrixType value.");
-//             boost::numeric::ublas::identity_matrix<T> m(num_rows,num_cols);
-//     }
-//     return Matrix<T>(m);
-// }
+// Initializes matrix using string "identity", "ones", or "zeros".
+template <class T>
+Matrix<T>::Matrix(std::string mat_type, int num_rows, int num_cols)
+{
+    boost::numeric::ublas::matrix<T> m(num_rows,num_cols);
+    if (mat_type == "identity")
+    {
+        if ( num_rows != num_cols )
+        {
+            throw std::invalid_argument("Cannot create non-square identity \
+                matrix.");
+        }
+        boost::numeric::ublas::identity_matrix<T> m(num_rows);
+        data = m;
+    }
+    else if (mat_type == "ones")
+    {
+        std::vector<T> v(num_rows*num_cols, 1);
+        boost::numeric::ublas::matrix<T> m =
+            track::create_matrix_from_vector(v, num_rows, num_cols);
+        data = m;
+    }
+    else if (mat_type == "zeros")
+    {
+        boost::numeric::ublas::zero_matrix<T> m(num_rows, num_cols);
+        data = m;
+    }
+    else
+    {
+        throw std::invalid_argument("Invalid mat_type value. mat_type is \
+            expected to equal \"identity\", \"ones\" or \"zeros\".");
+    }
+}
 
 // Default constructor.
 template <class T>
