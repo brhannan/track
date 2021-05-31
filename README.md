@@ -3,8 +3,10 @@
 
 ## Example
 
-Set up a Kalman filter for tracking a target that is expected to
-travel in one dimension with constant velocity. The filter runs at 10 Hz.
+Set up a Kalman filter for tracking a 2D constant-velocity target.
+The filter runs at 10 Hz.
+
+See /examples/ex_2d_const_vel.cpp.
 
 ```cpp
 #include <KalmanFilter.hpp>
@@ -81,9 +83,7 @@ int main()
 }
 ```
 
-The image below shows 2D constant velocity Kalman filter example
-
-![](https://github.com/brhannan/track/docs/images/kf_2d_const_vel.gif)
+![](https://github.com/brhannan/track/tree/main/docs/images/kf_2d_const_vel.gif)
 
 
 ## Dependencies
