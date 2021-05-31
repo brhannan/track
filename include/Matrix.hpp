@@ -118,17 +118,21 @@ public:
     // Calculates matrix inverse using LU inversion.
     Matrix<T> inverse()
     {
-         // TODO: Error if matrix is not square.
-         // TODO: Error if nonsingular.
-         using namespace boost::numeric;
-         // Initialize output.
-         Matrix<T> res(data.size1(),data.size2());
-         bool inv_status = inverse_impl(data,res.data);
-         if (!inv_status)
-         {
-             throw std::runtime_error("Unable to calculate matrix inverse.");
-         }
-         return res;
+        using namespace boost::numeric;
+        if (num_rows() != num_cols())
+        {
+            throw std::runtime_error("Cannot take inverse of non-square "
+                "matrix.");
+        }
+        // TODO: Error if non-singular.
+        // Initialize output.
+        Matrix<T> res(data.size1(),data.size2());
+        bool inv_status = inverse_impl(data,res.data);
+        if (!inv_status)
+        {
+            throw std::runtime_error("Unable to calculate matrix inverse.");
+        }
+        return res;
     }
 
     // Gets number of matrix rows.
