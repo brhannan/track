@@ -16,7 +16,9 @@ using namespace track;
 int main()
 {
     double dt = 0.1; // sec
+    std::cout << "---00---" << std::endl;
     KalmanFilter<double> kf("1d_const_vel", dt);
+    std::cout << "---01---" << std::endl;
 
     // Create measurement values.
     std::vector<double> x_vals = {0.001, 0.998, 2.003, 2.999};
@@ -41,9 +43,7 @@ int main()
         // Get the predicted state. The state vector is a column vector
         // containing position and velocity, respectively.
         Matrix<double> x = kf.state;
-        std::cout << "x = " << x(0,0) << std::endl;
-        std::cout << "v_x = " << x(1,0) << "\n" << std::endl;
+        std::cout << "x = " << x(0) << std::endl;
+        std::cout << "v_x = " << x(1) << "\n" << std::endl;
     }
-
-    return 0;
 }

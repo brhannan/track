@@ -10,7 +10,6 @@
 #include <KalmanFilter.hpp>
 #include <random>
 #include <iostream>
-#include <fstream>
 
 using namespace track;
 
@@ -59,11 +58,6 @@ int main()
     // Initialize the filter and validate its properties.
     kf.init();
 
-    // std::ofstream predfile;
-    // predfile.open ("predictions.txt");
-    // std::ofstream truthfile;
-    // truthfile.open ("truth.txt");
-
     for (int k = 0; k < nsamp; k++)
     {
         // Get a measurement vector.
@@ -79,16 +73,7 @@ int main()
         Matrix<double> x = kf.state;
         std::cout << "x = " << x(0) << " v_x = " << x(1) << " y = " << x(2) <<
             " v_y = " << x(3) << std::endl;
-
-        // // Write results to file.
-        // predfile << x(0) << " " << x(1) << " " << x(2) <<
-        //     " " << x(3) << std::endl;
-        // truthfile << x_true[k] << " " << vx_true[k] << " " << y_true[k] <<
-        //     " " << vy_true[k] << std::endl;
     }
-
-    // predfile.close();
-    // truthfile.close();
 
     return 0;
 }
