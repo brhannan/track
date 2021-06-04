@@ -6,10 +6,9 @@ See documentation and examples on
 
 ## Example
 
-Set up a Kalman filter for tracking a 2D constant-velocity target.
-The filter runs at 10 Hz.
+The code below uses a Kalman filter to tracking a 2D constant-velocity target.
 
-The results are shown below. Truth values are marked with black dots. Estimated values are shown by the blue circles.
+In the image below, truth values are marked with black dots. Estimated values are shown by blue circles.
 
 ![](https://github.com/brhannan/track/blob/main/docs/images/kf_2d_const_vel.gif)
 
