@@ -19,7 +19,7 @@ int main()
 {
     // Set up Gaussian random number generator.
     std::default_random_engine generator;
-    std::normal_distribution<double> distribution(0.0,0.5);
+    std::normal_distribution<double> distribution(0.0,1.0);
 
     // Filter period (sec).
     double dt = 0.1;
@@ -50,6 +50,7 @@ int main()
 
     // Set up Kalman filter. By default, the 2d_const_vel filter is configured
     // to measure x position and y position only (velocities are not measured).
+    // Change this by specifying a custom value for kf.measurement_matrix.
     KalmanFilter<double> kf("2d_const_vel", dt);
 
     // Initialize state vector. The state vector contains x, v_x, y, v_y.
