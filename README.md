@@ -17,15 +17,18 @@ using namespace track;
 
 int main()
 {
+    // Set up a Kalman filter. By default, the 2d_const_vel filter is configured
+    // to measure x position and y position only (velocities are not measured).
+    // This can be changed by specifying custom values for
+    // kf.measurement_matrix. The second argument the filter period (sec.).
+    KalmanFilter<double> kf("2d_const_vel", 0.1);
+
     // Set up Gaussian random number generator.
     std::default_random_engine generator;
     std::normal_distribution<double> distribution(0.0,1.0);
 
-    // Filter period (sec).
-    double dt = 0.1;
-
     // Create ground truth trajectory.
-    int nsamp = 100;
+    int nsamp = 100; // Num. times the filter will be stepped.
     std::vector<double> x_true(nsamp);
     std::vector<double> vx_true(nsamp);
     std::vector<double> y_true(nsamp);
@@ -43,12 +46,6 @@ int main()
         y_true[n] = y0 + vy0*n*dt + distribution(generator);
         vy_true[n] = vy0 + distribution(generator);
     }
-
-    // Set up Kalman filter. By default, the 2d_const_vel filter is configured
-    // to measure x position and y position only (velocities are not measured).
-    // This can be changed by specifying custom values for
-    // kf.measurement_matrix.
-    KalmanFilter<double> kf("2d_const_vel", dt);
 
     // Initialize state vector. The state vector contains x, v_x, y, v_y.
     std::vector<double> init_state_vals = {-4.4, 1.5, 5.2, -1.25};
