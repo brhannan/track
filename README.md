@@ -70,8 +70,7 @@ int main()
         // Step the filter.
         kf.update(y);
         kf.predict();
-        // Print the predicted state. The state vector is a column vector
-        // containing position and velocity, respectively.
+        // Print the predicted state.
         Matrix<double> x = kf.state;
         std::cout << "x = " << x(0) << " v_x = " << x(1) << " y = " << x(2) <<
             " v_y = " << x(3) << std::endl;
