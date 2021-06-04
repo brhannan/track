@@ -338,6 +338,8 @@ Matrix<T> operator+(const Matrix<T>& left, const T right)
 
 // Calculates inverse of input. Result is written to parameter inverse. Output
 // is false if LU factorization fails.
+// See Numerical Recipes, 3rd Ed., Press, Teukolsky, Vetterling, Flannery.
+// Sect. 2.3.
 template <class T>
 bool Matrix<T>::inverse_impl(const boost::numeric::ublas::matrix<T>& input,
     boost::numeric::ublas::matrix<T>& inverse)
@@ -346,7 +348,6 @@ bool Matrix<T>::inverse_impl(const boost::numeric::ublas::matrix<T>& input,
     typedef permutation_matrix<std::size_t> pmatrix;
     matrix<T> A(input);
     pmatrix pm(A.size1());
-    // LU decomposition
     int res = lu_factorize(A, pm);
     if (res != 0)
     {
