@@ -16,9 +16,7 @@ using namespace track;
 int main()
 {
     double dt = 0.1; // sec
-    std::cout << "---00---" << std::endl;
     KalmanFilter<double> kf("1d_const_vel", dt);
-    std::cout << "---01---" << std::endl;
 
     // Create measurement values.
     std::vector<double> x_vals = {0.001, 0.998, 2.003, 2.999};

@@ -15,6 +15,9 @@ public:
     bool is_mat_empty(track::Matrix<T>& mat);
     void init_from_identity_mat(track::Matrix<T>& mat, int L, T v = 1);
     void init_column_vector(track::Matrix<T>& vec, int L, T v = 0);
+protected:
+    std::string get_invalid_dims_err_msg(std::string mat_name,
+        int nrow_exp, int ncol_exp, int nrow_act, int ncol_act);
 };
 
 // Returns true if mat is empty.
@@ -48,6 +51,24 @@ void TrackingFilter<T>::init_column_vector(track::Matrix<T>& vec, int L, T v)
         }
     }
     vec.data = m;
+}
+
+// Creates an error message string indicating incorrect matrix dimensions.
+template <class T>
+std::string TrackingFilter<T>::get_invalid_dims_err_msg(std::string mat_name,
+    int nrow_exp, int ncol_exp, int nrow_act, int ncol_act)
+{
+    return std::string("Expected ") +
+        mat_name +
+        std::string(" to have dimensions [") +
+        std::to_string(nrow_exp) +
+        std::string(",") +
+        std::to_string(ncol_exp) +
+        std::string("]. Instead it was [") +
+        std::to_string(nrow_act) +
+        std::string(",") +
+        std::to_string(ncol_act) +
+        std::string("].");
 }
 
 } // namespace track

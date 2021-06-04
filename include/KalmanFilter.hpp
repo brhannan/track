@@ -29,6 +29,7 @@ public:
     track::Matrix<T> measurement_noise;
 
     void init();
+    void validate_properites();
     void predict();
     void update(track::Matrix<T>& y);
 
@@ -198,6 +199,55 @@ void KalmanFilter<T>::init()
     {
         this->init_from_identity_mat(measurement_noise, M_);
     }
+
+    // Validate filter properties.
+    validate_properites();
+}
+
+// Validates filter properties.
+template <class T>
+void KalmanFilter<T>::validate_properites()
+{
+    // State transition matrix is expected to be M,s-by-M.
+    int stm_n_rows = state_transition_matrix.num_rows();
+    int stm_n_cols = state_transition_matrix.num_cols();
+    if (stm_n_rows!=M_ | stm_n_cols!=M_)
+    {
+        throw std::invalid_argument(
+            this->get_invalid_dims_err_msg("state_transition_matrix",
+                M_, M_, stm_n_rows, stm_n_cols)
+        );
+    }
+
+    // Measurement matrix is expected to be N-by-M.
+    int h_n_rows = measurement_matrix.num_rows();
+    int h_n_cols = measurement_matrix.num_cols();
+    if (h_n_rows!=N_ | stm_n_cols!=M_)
+    {
+        throw std::invalid_argument(
+            this->get_invalid_dims_err_msg("measurement_matrix",
+                N_, M_, h_n_rows, h_n_cols)
+        );
+    }
+
+    // If configured to accept control inputs, ensure that control_matrix is a
+    // M-by-C matrix where M is the number of states and C is the number of
+    // controls.
+    if (has_control_input)
+    {
+        int ctrl_n_rows = control_matrix.num_rows();
+        int ctrl_n_cols = control_matrix.num_cols();
+        if (ctrl_n_rows!=M_ | ctrl_n_cols!=C_)
+        {
+            throw std::invalid_argument(
+                this->get_invalid_dims_err_msg("control_matrix",
+                    M_, C_, ctrl_n_rows, ctrl_n_cols)
+                );
+        }
+    }
+
+    // TODO:
+    //  Add more dims validation here.
 }
 
 // Predicts state, state error covariance.
