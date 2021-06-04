@@ -17,7 +17,9 @@ using namespace track;
 
 int main()
 {
-    // Set up a Kalman filter. By default, the 2d_const_vel filter is configured
+    // Set up a Kalman filter and configure it for tracking a target that
+    // travels on a 2D constant-velocity trajectory.
+    // By default, the 2d_const_vel filter is configured
     // to measure x position and y position only (velocities are not measured).
     // This can be changed by specifying custom values for
     // kf.measurement_matrix. The second argument the filter period (sec.).
