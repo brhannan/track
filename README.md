@@ -30,7 +30,7 @@ int main()
     std::vector<double> vx_true(nsamp);
     std::vector<double> y_true(nsamp);
     std::vector<double> vy_true(nsamp);
-    // Specify initial conditions.
+    // Specify true initial conditions.
     double x0 = 0;
     double y0 = 0;
     double vx0 = 1;
@@ -38,19 +38,16 @@ int main()
     for (int n = 0; n < nsamp; n++)
     {
         // Sample the Gaussian RNG to add noise to truth dyamics.
-        double dx = distribution(generator);
-        double dy = distribution(generator);
-        double dvx = distribution(generator);
-        double dvy = distribution(generator);
-        x_true[n] = x0 + n*vx0*dt + dx;
-        vx_true[n] = vx0 + dvx;
-        y_true[n] = y0 + n*vy0*dt + dy;
-        vy_true[n] = vy0 + dvy;
+        x_true[n] = x0 + vx0*n*dt + distribution(generator);
+        vx_true[n] = vx0 + distribution(generator);
+        y_true[n] = y0 + vy0*n*dt + distribution(generator);
+        vy_true[n] = vy0 + distribution(generator);
     }
 
     // Set up Kalman filter. By default, the 2d_const_vel filter is configured
     // to measure x position and y position only (velocities are not measured).
-    // Change this by specifying a custom value for kf.measurement_matrix.
+    // This can be changed by specifying custom values for
+    // kf.measurement_matrix.
     KalmanFilter<double> kf("2d_const_vel", dt);
 
     // Initialize state vector. The state vector contains x, v_x, y, v_y.
@@ -63,7 +60,7 @@ int main()
 
     for (int k = 0; k < nsamp; k++)
     {
-        // Get a measurement vector.
+        // Measure the target's position. Add noise to the true position.
         double x_meas = x_true[k] + distribution(generator);
         double y_meas = y_true[k] + distribution(generator);
         std::vector<double> meas_vec = {x_meas, y_meas};
@@ -76,8 +73,6 @@ int main()
         std::cout << "x = " << x(0) << " v_x = " << x(1) << " y = " << x(2) <<
             " v_y = " << x(3) << std::endl;
     }
-
-    return 0;
 }
 ```
 
