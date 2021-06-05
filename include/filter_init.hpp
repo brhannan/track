@@ -17,6 +17,4 @@ struct KFParams
     int N; // Num. measurements.
 };
 
-// TODO: Add more default motion models here.
-
 #endif // FILT_INIIT_H_

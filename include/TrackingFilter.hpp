@@ -53,7 +53,8 @@ void TrackingFilter<T>::init_column_vector(track::Matrix<T>& vec, int L, T v)
     vec.data = m;
 }
 
-// Creates an error message string indicating incorrect matrix dimensions.
+// Creates an error message string that is displayed when matrix dimensions are
+// invalid.
 template <class T>
 std::string TrackingFilter<T>::get_invalid_dims_err_msg(std::string mat_name,
     int nrow_exp, int ncol_exp, int nrow_act, int ncol_act)

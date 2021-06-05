@@ -30,7 +30,12 @@ public:
 
     void init();
     void validate_properites();
-    void predict();
+
+    // Predict (no control input).
+    void predict(const track::Matrix<T> &u = track::Matrix<T>("zeros",2,1));
+    // Predict (control input).
+    // void predict(track::Matrix<T> &u);
+
     void update(track::Matrix<T>& y);
 
     static KFParams<T> get_model_1d_const_vel(T dt);
@@ -67,9 +72,9 @@ KalmanFilter<T>::KalmanFilter(track::Matrix<T> F, track::Matrix<T> H,
 {
 }
 
-// Constructs a `KalmanFilter` using motion model `motion_model` and duration
-// `dt` (sec.).
-// `motion_model` may be one of the following:
+// Constructs a `KalmanFilter` using motion profile `motion_profile` and
+// period  `dt` (sec.).
+// `motion_profile` may be one of the following:
 //  "1d_const_vel", "2d_const_vel", "3d_const_vel",
 //  "1d_const_accel", "2d_const_accel", "3d_const_accel".
 template <class T>
@@ -250,12 +255,47 @@ void KalmanFilter<T>::validate_properites()
     //  Add more dims validation here.
 }
 
-// Predicts state, state error covariance.
+// // Predicts state, state error covariance.
+// template <class T>
+// void KalmanFilter<T>::predict()
+// {
+//     // Propagate the state transition matrix.
+//     track::Matrix<T> x = state_transition_matrix * state;
+//     // Store the predicted state.
+//     state = x;
+//     // Propagate the state covariance.
+//     state_covariance =
+//         state_transition_matrix * state_covariance * \
+//         state_transition_matrix.transpose() + process_noise;
+// }
+
+// Predicts state, state error covariance. Input is control vector.
 template <class T>
-void KalmanFilter<T>::predict()
+void KalmanFilter<T>::predict(const track::Matrix<T>& u)
 {
     // Propagate the state transition matrix.
     track::Matrix<T> x = state_transition_matrix * state;
+
+    if (has_control_input)
+    {
+        int u_num_rows = u.num_rows();
+        int u_num_cols = u.num_cols();
+        if (u_num_rows != C_)
+        {
+            throw std::invalid_argument(
+                std::string("Expected control vector to have ") +
+                std::to_string(C_) +
+                std::string(" elements.")
+            );
+        }
+        if (u_num_cols != 1)
+        {
+            throw std::invalid_argument(
+                std::string("Expected control vector to have 1 column.")
+            );
+        }
+        x = x + control_matrix * u;
+    }
     // Store the predicted state.
     state = x;
     // Propagate the state covariance.
@@ -324,7 +364,7 @@ KFParams<T> KalmanFilter<T>::get_model_1d_const_vel(T dt)
     return out;
 }
 
-// Gets 2D constant velocity motion model parameters. Outputs are returned in
+// Gets 2D constant velocity motion profile parameters. Outputs are returned in
 // a KFParams struct.
 //
 // Input dt is a duration in seconds. It is used to create the state transition
@@ -372,7 +412,7 @@ KFParams<T> KalmanFilter<T>::get_model_2d_const_vel(T dt)
     return out;
 }
 
-// TODO: Add more default motion models here.
+// TODO: Add more default motion profiles here.
 
 } // namespace track
 

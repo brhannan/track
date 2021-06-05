@@ -170,13 +170,13 @@ public:
     }
 
     // Gets number of matrix rows.
-    int num_rows()
+    int num_rows() const
     {
         return data.size1();
     }
 
     // Gets number of matrix columns.
-    int num_cols()
+    int num_cols() const
     {
         return data.size2();
     }
