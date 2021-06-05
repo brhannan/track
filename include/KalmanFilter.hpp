@@ -23,10 +23,10 @@ public:
     track::Matrix<T> state_transition_matrix;
     track::Matrix<T> measurement_matrix;
     track::Matrix<T> control_matrix;
-    track::Matrix<T> state;
-    track::Matrix<T> state_covariance;
     track::Matrix<T> process_noise;
     track::Matrix<T> measurement_noise;
+    track::Matrix<T> state;
+    track::Matrix<T> state_covariance;
 
     void init();
     void validate_properites();
@@ -36,7 +36,7 @@ public:
 
     static KFParams<T> get_model_1d_const_vel(T dt);
     static KFParams<T> get_model_2d_const_vel(T dt);
-    // static KFParams<T> get_model_3d_const_vel(T dt);
+    static KFParams<T> get_model_3d_const_vel(T dt);
 
     // static KFParams<T> get_model_1d_const_accel(T dt);
     // static KFParams<T> get_model_2d_const_accel(T dt);
@@ -307,9 +307,12 @@ void KalmanFilter<T>::update(track::Matrix<T>& y)
 // Input dt is a duration in seconds. It is used to create the state transition
 // matrix.
 //
+// By default, the measurement matrix samples position only. This matrix
+// can be replaced by a custom measurement matrix.
+//
 // Outputs are:
-//      M (num. measurments)        2
-//      N (num. states)             2
+//      N (num. measurments)        2
+//      M (num. states)             2
 //      state_transistion_matrix    [ 1 dt; 0 1 ]
 //      measurement_matrix          [ 1, 0; 0, 1 ]
 //      process_noise               M-by-M identity matrix.
@@ -347,10 +350,13 @@ KFParams<T> KalmanFilter<T>::get_model_1d_const_vel(T dt)
 // Input dt is a duration in seconds. It is used to create the state transition
 // matrix.
 //
+// By default, the measurement matrix samples position only. This matrix
+// can be replaced by a custom measurement matrix.
+//
 // Outputs are:
-//      M (num. measurments)        2
-//      N (num. states)             4
-//      state_transistion_matrix    [ 1 dt; 0 1 ]
+//      N (num. measurments)        2
+//      M (num. states)             4
+//      state_transistion_matrix    [ 1 dt; 0 1 ] block diagonal (see below)
 //      measurement_matrix          [ 1, 0, 0, 0;  0, 1, 0, 0 ]
 //      process_noise               M-by-M identity matrix.
 //      measurement_noise           N-by-N identity matrix.
@@ -374,6 +380,61 @@ KFParams<T> KalmanFilter<T>::get_model_2d_const_vel(T dt)
     std::vector<T> meas_vals = {
         1, 0, 0, 0,
         0, 0, 1, 0
+    };
+    track::Matrix<T> H(meas_vals,N,M);
+    track::Matrix<T> Q("identity",M,M);
+    track::Matrix<T> V("identity",N,N);
+    // Return filter params in KFParams struct.
+    KFParams<T> out;
+    out.state_transition_matrix = F;
+    out.measurement_matrix = H;
+    out.process_noise = Q;
+    out.measurement_noise = V;
+    out.M = M;
+    out.N = N;
+    return out;
+}
+
+// Gets 3D constant velocity motion profile parameters. Outputs are returned in
+// a KFParams struct.
+//
+// Input dt is a duration in seconds. It is used to create the state transition
+// matrix.
+//
+// By default, the measurement matrix samples position only. This matrix
+// can be replaced by a custom measurement matrix.
+//
+// Outputs are:
+//      N (num. measurments)        3
+//      M (num. states)             6
+//      state_transistion_matrix    [ 1 dt; 0 1 ]  block diagonal (see below)
+//      measurement_matrix          [ 1, 0, 0, 0, 0, 0;
+//                                    0, 0, 1, 0, 0, 0;
+//                                    0, 0, 0, 0, 1, 0 ]
+//      process_noise               M-by-M identity matrix.
+//      measurement_noise           N-by-N identity matrix.
+//
+// The state vector is a column vector containing the following elements:
+//      [ x; v_x; y; v_y z; v_z ]
+//
+// The semicolons above indicate the end of a row.
+template <class T>
+KFParams<T> KalmanFilter<T>::get_model_3d_const_vel(T dt)
+{
+    int M = 6;
+    int N = 3;
+    std::vector<T> stm_vals = {
+        1, dt, 0, 0,  0,  0,
+        0, 1,  0, 0,  0,  0,
+        0, 0,  1, dt, 0,  0,
+        0, 0,  0, 1,  1,  dt,
+        0, 0,  0, 0,  0,  1
+    };
+    track::Matrix<T> F(stm_vals,M,M);
+    std::vector<T> meas_vals = {
+        1, 0, 0, 0, 0, 0,
+        0, 0, 1, 0, 0, 0,
+        0, 0, 0, 0, 1, 0
     };
     track::Matrix<T> H(meas_vals,N,M);
     track::Matrix<T> Q("identity",M,M);
