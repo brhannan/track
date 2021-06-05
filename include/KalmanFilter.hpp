@@ -1,11 +1,9 @@
 #ifndef KALMAN_FILTER_H_
 #define KALMAN_FILTER_H_
 
-#include <boost/numeric/ublas/matrix.hpp>
-#include <boost/numeric/ublas/storage.hpp>
 #include <TrackingFilter.hpp>
-#include <Matrix.hpp>
 #include <filter_init.hpp>
+#include <Matrix.hpp>
 
 namespace track
 {
@@ -93,14 +91,14 @@ KalmanFilter<T>::KalmanFilter(std::string motion_model, T dt)
         process_noise = p.process_noise;
         measurement_noise = p.measurement_noise;
     }
-    // else if (motion_model == "3d_const_vel")
-    // {
-    //     KFParams<T> p = get_model_3d_const_vel(dt);
-    //     state_transition_matrix = p.state_transition_matrix;
-    //     measurement_matrix = p.measurement_matrix;
-    //     process_noise = p.process_noise;
-    //     measurement_noise = p.measurement_noise;
-    // }
+    else if (motion_model == "3d_const_vel")
+    {
+        KFParams<T> p = get_model_3d_const_vel(dt);
+        state_transition_matrix = p.state_transition_matrix;
+        measurement_matrix = p.measurement_matrix;
+        process_noise = p.process_noise;
+        measurement_noise = p.measurement_noise;
+    }
     // else if (motion_model == "1d_const_accel")
     // {
     //     KFParams<T> p = get_model_1d_const_accel(dt);
