@@ -31,11 +31,7 @@ public:
     void init();
     void validate_properites();
 
-    // Predict (no control input).
     void predict(const track::Matrix<T> &u = track::Matrix<T>("zeros",2,1));
-    // Predict (control input).
-    // void predict(track::Matrix<T> &u);
-
     void update(track::Matrix<T>& y);
 
     static KFParams<T> get_model_1d_const_vel(T dt);
@@ -255,20 +251,6 @@ void KalmanFilter<T>::validate_properites()
     //  Add more dims validation here.
 }
 
-// // Predicts state, state error covariance.
-// template <class T>
-// void KalmanFilter<T>::predict()
-// {
-//     // Propagate the state transition matrix.
-//     track::Matrix<T> x = state_transition_matrix * state;
-//     // Store the predicted state.
-//     state = x;
-//     // Propagate the state covariance.
-//     state_covariance =
-//         state_transition_matrix * state_covariance * \
-//         state_transition_matrix.transpose() + process_noise;
-// }
-
 // Predicts state, state error covariance. Input is control vector.
 template <class T>
 void KalmanFilter<T>::predict(const track::Matrix<T>& u)
@@ -309,19 +291,14 @@ template <class T>
 void KalmanFilter<T>::update(track::Matrix<T>& y)
 {
     // Calculate gain K.
-    track::Matrix<T> num = state_covariance * measurement_matrix.transpose();
-    track::Matrix<T> den =
-        measurement_matrix * state_covariance * measurement_matrix.transpose()
-        + measurement_noise;
-    track::Matrix<T> K = num * den.inverse();
+    track::Matrix<T> K = ( state_covariance * measurement_matrix.transpose() ) *
+        ( measurement_matrix * state_covariance * measurement_matrix.transpose()
+        + measurement_noise ).inverse();
     // Updade the state vector.
-    track::Matrix<T> x_plus = state + K*(y - measurement_matrix*state);
-    state = x_plus;
+    state = state + K*(y - measurement_matrix*state);
     // Update the state covariance matrix.
-    track::Matrix<T> P_k_plus = state_covariance -
+    state_covariance = state_covariance -
         K * measurement_matrix * state_covariance;
-    // TODO: Ensure symmetry of P_k_plus here.
-    state_covariance = P_k_plus;
 }
 
 // Gets 1D constant velocity motion model parameters. Outputs are returned in
