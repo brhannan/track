@@ -1,14 +1,14 @@
-#ifndef TRACKING_FILTER_H_
-#define TRACKING_FILTER_H_
+#ifndef ESTIMATIONFILTER_H_
+#define ESTIMATIONFILTER_H_
 
 #include <Matrix.hpp>
 
 namespace track
 {
 
-// TrackingFilter base class.
+// EstimationFilter base class.
 template <class T = double>
-class TrackingFilter
+class EstimationFilter
 {
 public:
     // Matrix initialization helper functions.
@@ -22,7 +22,7 @@ protected:
 
 // Returns true if mat is empty.
 template <class T>
-bool TrackingFilter<T>::is_mat_empty(track::Matrix<T>& mat)
+bool EstimationFilter<T>::is_mat_empty(track::Matrix<T>& mat)
 {
     return (mat.data.size1()==0) && (mat.data.size2()==0);
 }
@@ -30,7 +30,7 @@ bool TrackingFilter<T>::is_mat_empty(track::Matrix<T>& mat)
 // Initialize a square matrix by scaling an identity matrix of dimension L. The
 // matrix is scaled by scalar v. The result is returned to mat.
 template <class T>
-void TrackingFilter<T>::init_from_identity_mat(track::Matrix<T>& mat, int L,
+void EstimationFilter<T>::init_from_identity_mat(track::Matrix<T>& mat, int L,
     T v)
 {
     boost::numeric::ublas::identity_matrix<T> ident(L);
@@ -40,7 +40,7 @@ void TrackingFilter<T>::init_from_identity_mat(track::Matrix<T>& mat, int L,
 // Initialize a column vector by scaling a vector of dimension L. All values
 // are set to value v (default 0).
 template <class T>
-void TrackingFilter<T>::init_column_vector(track::Matrix<T>& vec, int L, T v)
+void EstimationFilter<T>::init_column_vector(track::Matrix<T>& vec, int L, T v)
 {
     boost::numeric::ublas::matrix<T> m(L,1);
     for (auto i=0; i<m.size1(); i++)
@@ -56,7 +56,7 @@ void TrackingFilter<T>::init_column_vector(track::Matrix<T>& vec, int L, T v)
 // Creates an error message string that is displayed when matrix dimensions are
 // invalid.
 template <class T>
-std::string TrackingFilter<T>::get_invalid_dims_err_msg(std::string mat_name,
+std::string EstimationFilter<T>::get_invalid_dims_err_msg(std::string mat_name,
     int nrow_exp, int ncol_exp, int nrow_act, int ncol_act)
 {
     return std::string("Expected ") +
@@ -74,4 +74,4 @@ std::string TrackingFilter<T>::get_invalid_dims_err_msg(std::string mat_name,
 
 } // namespace track
 
-#endif // TRACKING_FILTER_H_
+#endif // ESTIMATIONFILTER_H_
