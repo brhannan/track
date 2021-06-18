@@ -1,8 +1,11 @@
 #define BOOST_TEST_MODULE KalmanFilter
 #include <boost/test/unit_test.hpp>
-
 #include <KalmanFilter.hpp>
 #include <random>
+
+// Test points needed:
+//    2D const vel constructor
+//    All ND const accel constructors
 
 // Test default constructor, default type.
 BOOST_AUTO_TEST_CASE(testDefaultConstrutor)

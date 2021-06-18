@@ -1,7 +1,7 @@
 #ifndef KALMAN_FILTER_H_
 #define KALMAN_FILTER_H_
 
-#include <TrackingFilter.hpp>
+#include <EstimationFilter.hpp>
 #include <filter_init.hpp>
 #include <Matrix.hpp>
 
@@ -9,7 +9,7 @@ namespace track
 {
 
 template <class T = double>
-class KalmanFilter : public track::TrackingFilter<T>
+class KalmanFilter : public track::EstimationFilter<T>
 {
 public:
     KalmanFilter(track::Matrix<T> F, track::Matrix<T> H);
@@ -35,10 +35,9 @@ public:
     static KFParams<T> get_model_1d_const_vel(T dt);
     static KFParams<T> get_model_2d_const_vel(T dt);
     static KFParams<T> get_model_3d_const_vel(T dt);
-
-    // static KFParams<T> get_model_1d_const_accel(T dt);
-    // static KFParams<T> get_model_2d_const_accel(T dt);
-    // static KFParams<T> get_model_3d_const_accel(T dt);
+    static KFParams<T> get_model_1d_const_accel(T dt);
+    static KFParams<T> get_model_2d_const_accel(T dt);
+    static KFParams<T> get_model_3d_const_accel(T dt);
 
 protected:
     int M_; // Length of the state vector.
@@ -99,30 +98,30 @@ KalmanFilter<T>::KalmanFilter(std::string motion_model, T dt)
         process_noise = p.process_noise;
         measurement_noise = p.measurement_noise;
     }
-    // else if (motion_model == "1d_const_accel")
-    // {
-    //     KFParams<T> p = get_model_1d_const_accel(dt);
-    //     state_transition_matrix = p.state_transition_matrix;
-    //     measurement_matrix = p.measurement_matrix;
-    //     process_noise = p.process_noise;
-    //     measurement_noise = p.measurement_noise;
-    // }
-    // else if (motion_model == "2d_const_accel")
-    // {
-    //     KFParams<T> p = get_model_2d_const_accel(dt);
-    //     state_transition_matrix = p.state_transition_matrix;
-    //     measurement_matrix = p.measurement_matrix;
-    //     process_noise = p.process_noise;
-    //     measurement_noise = p.measurement_noise;
-    // }
-    // else if (motion_model == "3d_const_accel")
-    // {
-    //     KFParams<T> p = get_model_3d_const_accel(dt);
-    //     state_transition_matrix = p.state_transition_matrix;
-    //     measurement_matrix = p.measurement_matrix;
-    //     process_noise = p.process_noise;
-    //     measurement_noise = p.measurement_noise;
-    // }
+    else if (motion_model == "1d_const_accel")
+    {
+        KFParams<T> p = get_model_1d_const_accel(dt);
+        state_transition_matrix = p.state_transition_matrix;
+        measurement_matrix = p.measurement_matrix;
+        process_noise = p.process_noise;
+        measurement_noise = p.measurement_noise;
+    }
+    else if (motion_model == "2d_const_accel")
+    {
+        KFParams<T> p = get_model_2d_const_accel(dt);
+        state_transition_matrix = p.state_transition_matrix;
+        measurement_matrix = p.measurement_matrix;
+        process_noise = p.process_noise;
+        measurement_noise = p.measurement_noise;
+    }
+    else if (motion_model == "3d_const_accel")
+    {
+        KFParams<T> p = get_model_3d_const_accel(dt);
+        state_transition_matrix = p.state_transition_matrix;
+        measurement_matrix = p.measurement_matrix;
+        process_noise = p.process_noise;
+        measurement_noise = p.measurement_noise;
+    }
     else
     {
         throw std::invalid_argument("Expected input motion_model to equal one "
@@ -448,7 +447,140 @@ KFParams<T> KalmanFilter<T>::get_model_3d_const_vel(T dt)
     return out;
 }
 
-// TODO: Add more default motion profiles here.
+// Gets 1D constant acceleration motion model parameters. Outputs are returned
+// in a KFParams struct.
+//
+// Input dt is a duration in seconds. It is used to create the state transition
+// matrix.
+//
+// By default, the measurement matrix samples position and velicyt only. This
+// matrix can be replaced by a custom measurement matrix.
+//
+// Outputs are:
+//      N (num. measurments)        2
+//      M (num. states)             3
+//      state_transistion_matrix    [1 dt 0.5*dt^2; 0 1 dt; 0 0 1]
+//      measurement_matrix          [ 1, 0, 0; 0, 1, 0 ]
+//      process_noise               M-by-M identity matrix.
+//      measurement_noise           N-by-N identity matrix.
+//
+// The state vector is a column vector containing the following elements:
+//      [ x; v_x ; a_x]
+//
+// The semicolons above indicate the end of a row.
+template <class T>
+KFParams<T> KalmanFilter<T>::get_model_1d_const_accel(T dt)
+{
+    int M = 2;
+    int N = 3;
+    std::vector<T> stm_vals = {1, dt, 0.5*dt*dt,  0, 1, dt,  0, 0, 1};
+    track::Matrix<T> F(stm_vals,M,M);
+    std::vector<T> meas_vals = {1, 0, 0,  0, 0, 1};
+    track::Matrix<T> H(meas_vals,N,M);
+    track::Matrix<T> Q("identity",M,M);
+    track::Matrix<T> V("identity",N,N);
+    // Return filter params in KFParams struct.
+    KFParams<T> out;
+    out.state_transition_matrix = F;
+    out.measurement_matrix = H;
+    out.process_noise = Q;
+    out.measurement_noise = V;
+    out.M = M;
+    out.N = N;
+    return out;
+}
+
+// Gets 2D constant acceleration motion model parameters. Outputs are returned
+// in a KFParams struct.
+//
+// Input dt is a duration in seconds. It is used to create the state transition
+// matrix.
+//
+// By default, the measurement matrix samples position only. This matrix
+// can be replaced by a custom measurement matrix.
+//
+// Outputs are:
+//      N (num. measurments)        2
+//      M (num. states)             3
+//      state_transistion_matrix    [1 dt 0.5*dt^2; 0 1 dt; 0 0 1]
+//      measurement_matrix          [ 1, 0, 0, 0, 0, 0; 0, 0, 0, 1, 0, 0 ]
+//      process_noise               M-by-M identity matrix.
+//      measurement_noise           N-by-N identity matrix.
+//
+// The state vector is a column vector containing the following elements:
+//      [ x; v_x ; a_x; y; v_y; a_y ]
+//
+// The semicolons above indicate the end of a row.
+template <class T>
+KFParams<T> KalmanFilter<T>::get_model_2d_const_accel(T dt)
+{
+    int M = 2;
+    int N = 6;
+    std::vector<T> stm_vals = {1, dt, 0.5*dt*dt,  0, 1, dt,  0, 0, 1};
+    track::Matrix<T> F(stm_vals,M,M);
+    std::vector<T> meas_vals = {1, 0, 0, 0, 0, 0,  0, 0, 0, 1, 0, 0};
+    track::Matrix<T> H(meas_vals,N,M);
+    track::Matrix<T> Q("identity",M,M);
+    track::Matrix<T> V("identity",N,N);
+    // Return filter params in KFParams struct.
+    KFParams<T> out;
+    out.state_transition_matrix = F;
+    out.measurement_matrix = H;
+    out.process_noise = Q;
+    out.measurement_noise = V;
+    out.M = M;
+    out.N = N;
+    return out;
+}
+
+// Gets 3D constant acceleration motion model parameters. Outputs are returned
+// in a KFParams struct.
+//
+// Input dt is a duration in seconds. It is used to create the state transition
+// matrix.
+//
+// By default, the measurement matrix samples position only. This matrix
+// can be replaced by a custom measurement matrix.
+//
+// Outputs are:
+//      N (num. measurments)        2
+//      M (num. states)             3
+//      state_transistion_matrix    [1 dt 0.5*dt^2; 0 1 dt; 0 0 1]
+//      measurement_matrix          [ 1, 0, 0, 0, 0, 0, 0, 0, 0;
+//                                    0, 0, 0, 1, 0, 0, 0, 0, 0;
+//                                    0, 0, 0, 0, 0, 0, 1, 0, 0 ]
+//      process_noise               M-by-M identity matrix.
+//      measurement_noise           N-by-N identity matrix.
+//
+// The state vector is a column vector containing the following elements:
+//      [ x; v_x ; a_x; y; v_y; a_y; z; v_z; a_z ]
+//
+// The semicolons above indicate the end of a row.
+template <class T>
+KFParams<T> KalmanFilter<T>::get_model_3d_const_accel(T dt)
+{
+    int M = 3;
+    int N = 9;
+    std::vector<T> stm_vals = {1, dt, 0.5*dt*dt,  0, 1, dt,  0, 0, 1};
+    track::Matrix<T> F(stm_vals,M,M);
+    std::vector<T> meas_vals = {
+        1, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 1, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 1, 0, 0
+    };
+    track::Matrix<T> H(meas_vals,N,M);
+    track::Matrix<T> Q("identity",M,M);
+    track::Matrix<T> V("identity",N,N);
+    // Return filter params in KFParams struct.
+    KFParams<T> out;
+    out.state_transition_matrix = F;
+    out.measurement_matrix = H;
+    out.process_noise = Q;
+    out.measurement_noise = V;
+    out.M = M;
+    out.N = N;
+    return out;
+}
 
 } // namespace track
 
