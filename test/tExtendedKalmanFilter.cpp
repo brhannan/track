@@ -6,7 +6,7 @@
 // Test default constructor, default type.
 BOOST_AUTO_TEST_CASE(testDefaultConstrutor)
 {
-    track::ExtendedKalmanFilter<> kf;
+    track::ExtendedKalmanFilter<> ekf;
     BOOST_CHECK(true);
 }
 

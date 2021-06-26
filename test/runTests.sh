@@ -3,3 +3,4 @@
 # Run tests.
 ./tMatrix
 ./tKalmanFilter
+./tExtendedKalmanFilter
