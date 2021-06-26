@@ -35,12 +35,17 @@ public:
     track::Matrix<T> state;
     track::Matrix<T> measurement_noise;
     track::Matrix<T> process_noise;
+    T process_noise_variance = 1;
     track::Matrix<T> state_covariance;
+
+    bool additive_process_noise = true;
 
     void init(); // TODO: move to base class ***********************************
     void validate_properites(); // TODO: move to base class ********************
 
-    void predict();
+    void predict(T dt = 1);
+    // void precict(track::Matrix<T>& z, T dt = 1)
+
     void update(track::Matrix<T>& y);
 
 protected:
@@ -165,16 +170,25 @@ int ExtendedKalmanFilter<T>::get_num_measurements()
 }
 
 
+// Updates the filter. Optional input dt is the filter step size (seconds).
 template <class T>
-void ExtendedKalmanFilter<T>::predict()
+void ExtendedKalmanFilter<T>::predict(T dt)
 {
-    state = measurement_function->step(state);
+    state = state_transition_function->step(state,dt);
+    track::Matrix<T> Fhat = state_transition_function_jacobian->step(state,dt);
+    track::Matrix<T> P = Fhat * state_covariance +
+        state_covariance * Fhat.transpose();
+    if (additive_process_noise)
+    {
+        P = P + process_noise*process_noise_variance*process_noise.transpose();
+    }
 }
 
 
 template <class T>
 void ExtendedKalmanFilter<T>::update(track::Matrix<T>& y)
 {
+
 }
 
 } // namespace track
