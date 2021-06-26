@@ -19,8 +19,12 @@ template <class T = double>
 class ExtendedKalmanFilter : public track::EstimationFilter<T>
 {
 public:
-    ExtendedKalmanFilter();
+    ExtendedKalmanFilter(int num_states, int num_meas);
+    ExtendedKalmanFilter(int num_states, int num_meas,
+        TrackingFunction<T> f, TrackingFunction<T> fj, TrackingFunction<T> h,
+        TrackingFunction<T> hj);
     ExtendedKalmanFilter(std::string motion_model, T dt);
+    ExtendedKalmanFilter();
 
     TrackingFunction<T>* state_transition_function;
     TrackingFunction<T>* state_transition_function_jacobian;
@@ -169,7 +173,7 @@ void ExtendedKalmanFilter<T>::predict()
 
 
 template <class T>
-void ExtendedKalmanFilter<T>::update(track::Matrix<T>& y)()
+void ExtendedKalmanFilter<T>::update(track::Matrix<T>& y)
 {
 }
 

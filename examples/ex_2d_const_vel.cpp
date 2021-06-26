@@ -51,12 +51,14 @@ int main()
     KalmanFilter<double> kf("2d_const_vel", dt);
 
     // Initialize state vector. The state vector contains x, v_x, y, v_y.
-    std::vector<double> init_state_vals = {-4.4, 1.5, 5.2, -1.25};
+    std::vector<double> init_state_vals = {-1.4, 1.5, 1.2, 0.25};
     Matrix<double> state0(init_state_vals,4,1);
     kf.state = state0;
 
     // Initialize the filter and validate its properties.
     kf.init();
+
+    // Set up a place to store the estimated position.
 
     for (int k = 0; k < nsamp; k++)
     {

@@ -59,17 +59,12 @@ template <class T>
 std::string EstimationFilter<T>::get_invalid_dims_err_msg(std::string mat_name,
     int nrow_exp, int ncol_exp, int nrow_act, int ncol_act)
 {
-    return std::string("Expected ") +
-        mat_name +
+    return std::string("Expected ") + mat_name +
         std::string(" to have dimensions [") +
-        std::to_string(nrow_exp) +
-        std::string(",") +
-        std::to_string(ncol_exp) +
-        std::string("]. Instead it was [") +
-        std::to_string(nrow_act) +
-        std::string(",") +
-        std::to_string(ncol_act) +
-        std::string("].");
+        std::to_string(nrow_exp) + std::string(",") +
+        std::to_string(ncol_exp) + std::string("]. Instead it was [") +
+        std::to_string(nrow_act) + std::string(",") +
+        std::to_string(ncol_act) + std::string("].");
 }
 
 } // namespace track
