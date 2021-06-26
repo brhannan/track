@@ -6,7 +6,7 @@ See documentation and examples on
 
 ## Example
 
-The code below uses a Kalman filter to tracking a 2D constant-velocity target.
+The code below uses a Kalman filter to track a 2D constant-velocity target.
 
 In the image below, truth values are marked with black dots. Estimated values are shown by blue circles.
 
